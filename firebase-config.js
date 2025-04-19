@@ -1,16 +1,21 @@
-// Configuración de Firebase
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "TU_API_KEY", // Reemplazar con tu API key real
-  authDomain: "TU_PROYECTO.firebaseapp.com", // Reemplazar con tu dominio
-  projectId: "TU_PROYECTO", // Reemplazar con tu project ID
-  storageBucket: "TU_PROYECTO.appspot.com", // Reemplazar con tu storage bucket
-  messagingSenderId: "TU_MESSAGING_SENDER_ID", // Reemplazar con tu messaging sender ID
-  appId: "TU_APP_ID" // Reemplazar con tu app ID
+  apiKey: "AIzaSyA3EwtirsHI_kwxMLH5SP2rXbm3vCYpqhg",
+  authDomain: "coopaguagolf-b1e2f.firebaseapp.com",
+  projectId: "coopaguagolf-b1e2f",
+  storageBucket: "coopaguagolf-b1e2f.firebasestorage.app",
+  messagingSenderId: "980063915524",
+  appId: "1:980063915524:web:e991b552b607d2447aef51",
+  measurementId: "G-V6Z34N9V06"
 };
 
-// Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
-
-// Exportar funcionalidades que usaremos
-const auth = firebase.auth();
-const db = firebase.firestore();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
