@@ -1,0 +1,17 @@
+proyecto-coopaguagolf/
+├── index.html (página principal)
+├── css/
+│   └── styles.css (estilos personalizados)
+├── js/
+│   ├── auth.js (autenticación)
+│   ├── facturas.js (manejo de facturas)
+│   ├── reclamos.js (sistema de reclamos)
+│   └── perfil.js (datos del usuario)
+├── pages/
+│   ├── login.html
+│   ├── register.html
+│   ├── dashboard.html (panel principal)
+│   ├── facturas.html
+│   ├── reclamos.html
+│   └── perfil.html
+└── firebase-config.js (configuración de Firebase)

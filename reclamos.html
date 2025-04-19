@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reclamos - Oficina Virtual</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Cooperativa Agua Golf</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="facturas.html">Facturas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="reclamos.html">Reclamos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="perfil.html">Mi Perfil</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <span class="navbar-text me-3" id="userDisplayName">Usuario</span>
+                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title m-0">Crear Nuevo Reclamo</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="reclamoForm">
+                            <div class="mb-3">
+                                <label for="tipoReclamo" class="form-label">Tipo de Reclamo</label>
+                                <select class="form-select" id="tipoReclamo" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="falta_agua">Falta de Agua</option>
+                                    <option value="baja_presion">Baja Presión</option>
+                                    <option value="perdida">Pérdida en la Vía Pública</option>
+                                    <option value="facturacion">Problemas de Facturación</option>
+                                    <option value="medidor">Problemas con el Medidor</option>
+                                    <option value="otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="urgencia" class="form-label">Nivel de Urgencia</label>
+                                <select class="form-select" id="urgencia" required>
+                                    <option value="baja">Baja - Puede esperar</option>
+                                    <option value="media">Media - Necesita atención esta semana</option>
+                                    <option value="alta">Alta - Necesita atención en 24-48hs</option>
+                                    <option value="urgente">Urgente - Necesita atención inmediata</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcion" class="form-label">Descripción del Problema</label>
+                                <textarea class="form-control" id="descripcion" rows="4" required placeholder="Describa su problema con el mayor detalle posible..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="direccion" class="form-label">Dirección Exacta</label>
+                                <input type="text" class="form-control" id="direccion" required placeholder="Calle, número, referencias...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fotoReclamo" class="form-label">Adjuntar Foto (Opcional)</label>
+                                <input type="file" class="form-control" id="fotoReclamo" accept="image/*">
+                                <div class="form-text">Puede adjuntar una imagen para ayudar a identificar el problema.</div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Enviar Reclamo</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header bg-danger text-white">
+                        <h3 class="card-title m-0">Emergencias</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Para situaciones que requieran atención inmediata como:</p>
+                        <ul>
+                            <li>Roturas principales</li>
+                            <li>Inundaciones</li>
+                            <li>Falta de agua en todo el barrio</li>
+                        </ul>
+                        <hr>
+                        <div class="d-grid gap-2">
+                            <a href="tel:+5491123456789" class="btn btn-danger">
+                                <i class="bi bi-telephone-fill"></i> Llamar a Emergencias
+                            </a>
+                            <a href="https://wa.me/549123456789" class="btn btn-success" target="_blank">
+                                <i class="bi bi-whatsapp"></i> WhatsApp Urgente
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="card-title m-0">Mis Reclamos Recientes</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush" id="misReclamos">
+                            <li class="list-group-item text-center">Cargando reclamos...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista completa de reclamos -->
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title m-0">Historial de Reclamos</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReclamos">
+                            <tr>
+                                <td colspan="5" class="text-center">Cargando historial de reclamos...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal para detalle de reclamo -->
+        <div class="modal fade" id="detalleReclamoModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title">Detalle del Reclamo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="detalleReclamoBody">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-light text-center py-3 mt-auto">
+        <p>&copy; 2024 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    
+    <!-- Configuración Firebase -->
+    <script src="../firebase-config.js"></script>
+    
+    <script>
+        // Variables globales
+        let currentUser;
+        const storage = firebase.storage();
+        
+        // Verificar autenticación
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // Usuario autenticado
+                currentUser = user;
+                document.getElementById('userDisplayName').textContent = user.email;
+                
+                // Cargar reclamos del usuario
+                cargarReclamos();
+            } else {
+                // No hay usuario autenticado, redirigir al login
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // Cerrar sesión
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            firebase.auth().signOut()
+                .then(() => {
+                    window.location.href = '../index.html';
+                })
+                .catch((error) => {
+                    console.error('Error al cerrar sesión:', error);
+                });
+        });
+        
+        // Formulario de reclamo
+        document.getElementById('reclamoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const tipoReclamo = document.getElementById('tipoReclamo').value;
+            const urgencia = document.getElementById('urgencia').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const direccion = document.getElementById('direccion').value;
+            const fotoInput = document.getElementById('fotoReclamo');
+            
+            // Verificar si hay una foto seleccionada
+            if (fotoInput.files.length > 0) {
+                const file = fotoInput.files[0];
+                const storageRef = storage.ref(`reclamos/${currentUser.uid}/${Date.now()}_${file.name}`);
+                
+                // Subir la foto primero
+                storageRef.put(file).then((snapshot) => {
+                    // Obtener la URL de la foto subida
+                    return snapshot.ref.getDownloadURL();
+                }).then((fotoURL) => {
+                    // Crear el reclamo con la URL de la foto
+                    guardarReclamo(tipoReclamo, urgencia, descripcion, direccion, fotoURL);
+                }).catch((error) => {
+                    console.error('Error al subir la foto:', error);
+                    alert('Error al subir la foto. Intente nuevamente.');
+                });
+            } else {
+                // Crear reclamo sin foto
+                guardarReclamo(tipoReclamo, urgencia, descripcion, direccion, null);
+            }
+        });
+        
+        // Guardar reclamo en Firestore
+        function guardarReclamo(tipo, urgencia, descripcion, direccion, fotoURL) {
+            const nuevoReclamo = {
+                usuarioId: currentUser.uid,
+                tipo: tipo,
+                urgencia: urgencia,
+                descripcion: descripcion,
+                direccion: direccion,
+                estado: 'pendiente',
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Agregar la URL de la foto si existe
+            if (fotoURL) {
+                nuevoReclamo.fotoURL = fotoURL;
+            }
+            
+            // Guardar en Firestore
+            db.collection('reclamos').add(nuevoReclamo)
+                .then(() => {
+                    alert('Reclamo enviado correctamente');
+                    document.getElementById('reclamoForm').reset();
+                    
+                    // Recargar la lista de reclamos
+                    cargarReclamos();
+                })
+                .catch((error) => {
+                    console.error('Error al guardar el reclamo:', error);
+                    alert('Error al enviar el reclamo. Intente nuevamente.');
+                });
+        }
+        
+        // Cargar reclamos del usuario
+        function cargarReclamos() {
+            const misReclamosLista = document.getElementById('misReclamos');
+            const tablaReclamos = document.getElementById('tablaReclamos');
+            
+            // Cargar reclamos recientes para el panel lateral
+            db.collection('reclamos')
+                .where('usuarioId', '==', currentUser.uid)
+                .orderBy('fechaCreacion', 'desc')
+                .limit(5)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        misReclamosLista.innerHTML = '<li class="list-group-item text-center">No tiene reclamos recientes.</li>';
+                    } else {
+                        misReclamosLista.innerHTML = '';
+                        
+                        querySnapshot.forEach((doc) => {
+                            const reclamo = doc.data();
+                            const fecha = reclamo.fechaCreacion ? new Date(reclamo.fechaCreacion.seconds * 1000).toLocaleDateString() : 'Sin fecha';
+                            
+                            // Determinar el color según el estado
+                            let colorEstado = 'secondary';
+                            if (reclamo.estado === 'en_proceso') colorEstado = 'warning';
+                            if (reclamo.estado === 'resuelto') colorEstado = 'success';
+                            if (reclamo.estado === 'rechazado') colorEstado = 'danger';
+                            
+                            const li = document.createElement('li');
+                            li.className = 'list-group-item';
+                            li.innerHTML = `
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <strong>${obtenerNombreTipo(reclamo.tipo)}</strong>
+                                        <br><small>${fecha}</small>
+                                    </div>
+                                    <span class="badge bg-${colorEstado}">${obtenerNombreEstado(reclamo.estado)}</span>
+                                </div>
+                                <small class="text-muted">${recortarTexto(reclamo.descripcion, 50)}</small>
+                                <div class="mt-1">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="verDetalleReclamo('${doc.id}')">
+                                        Ver detalles
+                                    </button>
+                                </div>
+                            `;
+                            
+                            misReclamosLista.appendChild(li);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al cargar reclamos recientes:', error);
+                    misReclamosLista.innerHTML = '<li class="list-group-item text-center text-danger">Error al cargar reclamos.</li>';
+                });
+                
+            // Cargar todos los reclamos para la tabla
+            db.collection('reclamos')
+                .where('usuarioId', '==', currentUser.uid)
+                .orderBy('fechaCreacion', 'desc')
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        tablaReclamos.innerHTML = '<tr><td colspan="5" class="text-center">No tiene reclamos registrados.</td></tr>';
+                    } else {
+                        tablaReclamos.innerHTML = '';
+                        
+                        querySnapshot.forEach((doc) => {
+                            const reclamo = doc.data();
+                            const fecha = reclamo.fechaCreacion ? new Date(reclamo.fechaCreacion.seconds * 1000).toLocaleDateString() : 'Sin fecha';
+                            
+                            // Determinar el color según el estado
+                            let colorEstado = 'secondary';
+                            if (reclamo.estado === 'en_proceso') colorEstado = 'warning';
+                            if (reclamo.estado === 'resuelto') colorEstado = 'success';
+                            if (reclamo.estado === 'rechazado') colorEstado = 'danger';
+                            
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${fecha}</td>
+                                <td>${obtenerNombreTipo(reclamo.tipo)}</td>
+                                <td>${recortarTexto(reclamo.descripcion, 80)}</td>
+                                <td><span class="badge bg-${colorEstado}">${obtenerNombreEstado(reclamo.estado)}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="verDetalleReclamo('${doc.id}')">Ver</button>
+                                    ${reclamo.estado === 'pendiente' ? 
+                                        `<button class="btn btn-sm btn-danger" onclick="cancelarReclamo('${doc.id}')">Cancelar</button>` : ''}
+                                </td>
+                            `;
+                            
+                            tablaReclamos.appendChild(tr);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al cargar historial de reclamos:', error);
+                    tablaReclamos.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error al cargar el historial.</td></tr>';
+                });
+        }
+        
+        // Ver detalle de un reclamo
+        function verDetalleReclamo(reclamoId) {
+            const detalleReclamoBody = document.getElementById('detalleReclamoBody');
+            
+            // Mostrar modal
+            const detalleModal = new bootstrap.Modal(document.getElementById('detalleReclamoModal'));
+            detalleModal.show();
+            
+            // Cargar datos del reclamo
+            db.collection('reclamos').doc(reclamoId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const reclamo = doc.data();
+                        const fecha = reclamo.fechaCreacion ? new Date(reclamo.fechaCreacion.seconds * 1000).toLocaleDateString() : 'Sin fecha';
+                        
+                        // Determinar el color según el estado
+                        let colorEstado = 'secondary';
+                        if (reclamo.estado === 'en_proceso') colorEstado = 'warning';
+                        if (reclamo.estado === 'resuelto') colorEstado = 'success';
+                        if (reclamo.estado === 'rechazado') colorEstado = 'danger';
+                        
+                        let contenidoHTML = `
+                            <h5>Reclamo #${reclamoId.substring(0, 8)}</h5>
+                            <p><strong>Fecha:</strong> ${fecha}</p>
+                            <p><strong>Tipo:</strong> ${obtenerNombreTipo(reclamo.tipo)}</p>
+                            <p><strong>Urgencia:</strong> ${obtenerNombreUrgencia(reclamo.urgencia)}</p>
+                            <p><strong>Estado:</strong> <span class="badge bg-${colorEstado}">${obtenerNombreEstado(reclamo.estado)}</span></p>
+                            <p><strong>Dirección:</strong> ${reclamo.direccion}</p>
+                            <hr>
+                            <h6>Descripción:</h6>
+                            <p>${reclamo.descripcion}</p>
+                        `;
+                        
+                        // Agregar imagen si existe
+                        if (reclamo.fotoURL) {
+                            contenidoHTML += `
+                                <hr>
+                                <h6>Foto adjunta:</h6>
+                                <div class="text-center">
+                                    <img src="${reclamo.fotoURL}" alt="Foto reclamo" class="img-fluid rounded" style="max-height: 300px;">
+                                </div>
+                            `;
+                        }
+                        
+                        // Agregar respuesta si existe
+                        if (reclamo.respuesta) {
+                            contenidoHTML += `
+                                <hr>
+                                <h6>Respuesta:</h6>
+                                <div class="alert alert-info">
+                                    ${reclamo.respuesta}
+                                </div>
+                            `;
+                            
+                            if (reclamo.fechaRespuesta) {
+                                const fechaRespuesta = new Date(reclamo.fechaRespuesta.seconds * 1000).toLocaleDateString();
+                                contenidoHTML += `<small class="text-muted">Respondido el ${fechaRespuesta}</small>`;
+                            }
+                        }
+                        
+                        detalleReclamoBody.innerHTML = conteni
