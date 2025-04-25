@@ -162,12 +162,9 @@
             
             // Aplicar filtro por año si es necesario
             if (anio !== 'todos') {
-                // Fecha inicio y fin del
-                // Aplicar filtro por año si es necesario
-                if (anio !== 'todos') {
-                    // Fecha inicio y fin del año seleccionado
-                    const fechaInicio = new Date(`${anio}-01-01`);
-                    const fechaFin = new Date(`${anio}-12-31`);
+                // Fecha inicio y fin del año seleccionado
+                      const fechaInicio = new Date(`${anio}-01-01`);
+                      const fechaFin = new Date(`${anio}-12-31`);
                     
                     query = query.where('fechaEmision', '>=', fechaInicio)
                               .where('fechaEmision', '<=', fechaFin);
