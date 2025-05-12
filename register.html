@@ -140,6 +140,7 @@
 
         function validatePassword() {
             const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
             
             // Validar longitud
             const isLengthValid = password.length >= 6 && password.length <= 20;
@@ -162,11 +163,15 @@
             specialReq.classList.toggle('valid', hasSpecialChar);
 
             // Validar confirmación de contraseña
-            const isConfirmValid = password === confirmPasswordInput.value && password !== '';
+            const isConfirmValid = password === confirmPassword && password !== '';
             
             // Habilitar botón solo si todos los requisitos se cumplen
-            const isAllValid = isLengthValid && hasUppercase && hasLowercase && 
-                              hasNumber && hasSpecialChar && isConfirmValid;
+            const isAllValid = isLengthValid && 
+                               hasUppercase && 
+                               hasLowercase && 
+                               hasNumber && 
+                               hasSpecialChar && 
+                               isConfirmValid;
             
             submitBtn.disabled = !isAllValid;
         }
@@ -181,7 +186,6 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = passwordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
             
             // Crear usuario en Firebase
             firebase.auth().createUserWithEmailAndPassword(email, password)
