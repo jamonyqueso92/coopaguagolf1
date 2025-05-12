@@ -77,17 +77,48 @@
                             </div>
                             <div id="errorMessage" class="text-danger mt-2 text-center"></div>
                         </form>
+                        <div class="text-center mt-3">
+                            <p>¿Ya tienes cuenta? <a href="login-con-firebase.html">Inicia sesión aquí</a></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal de Verificación -->
+    <div class="modal fade" id="successModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Registro Exitoso</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p>Se ha creado tu cuenta correctamente.</p>
+                    <p>Por favor, verifica tu correo electrónico.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" id="closeModal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- Configuración Firebase -->
+    <script src="../firebase-config.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('confirmPassword');
             const submitBtn = document.getElementById('submitBtn');
+            const registerForm = document.getElementById('registerForm');
+            const errorMessage = document.getElementById('errorMessage');
 
             // Requisitos de contraseña
             const lengthReq = document.getElementById('length-req');
@@ -96,12 +127,14 @@
             const numberReq = document.getElementById('number-req');
             const specialReq = document.getElementById('special-req');
 
+            // Modal
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            const closeModalBtn = document.getElementById('closeModal');
+
             function validatePassword() {
                 const password = passwordInput.value;
                 const confirmPassword = confirmPasswordInput.value;
                 
-                console.log('Validando contraseña:', password); // Añadido para depuración
-
                 // Validar longitud
                 const isLengthValid = password.length >= 6 && password.length <= 20;
                 lengthReq.classList.toggle('valid', isLengthValid);
@@ -134,13 +167,65 @@
                                    isConfirmValid;
                 
                 submitBtn.disabled = !isAllValid;
-
-                console.log('Botón habilitado:', !isAllValid); // Añadido para depuración
             }
 
             // Agregar eventos de escucha
             passwordInput.addEventListener('input', validatePassword);
             confirmPasswordInput.addEventListener('input', validatePassword);
+
+            // Manejar el envío del formulario
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = passwordInput.value;
+
+                // Crear usuario en Firebase
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Enviar correo de verificación
+                        return userCredential.user.sendEmailVerification();
+                    })
+                    .then(() => {
+                        // Guardar información adicional en Firestore
+                        const user = firebase.auth().currentUser;
+                        return firebase.firestore().collection('usuarios').doc(user.uid).set({
+                            nombre: name,
+                            email: email,
+                            fechaRegistro: new Date(),
+                            rol: 'usuario'
+                        });
+                    })
+                    .then(() => {
+                        // Mostrar modal de éxito
+                        successModal.show();
+                    })
+                    .catch((error) => {
+                        // Manejar errores
+                        let errorMsg = '';
+                        switch(error.code) {
+                            case 'auth/email-already-in-use':
+                                errorMsg = 'Este correo electrónico ya está registrado.';
+                                break;
+                            case 'auth/invalid-email':
+                                errorMsg = 'Correo electrónico no válido.';
+                                break;
+                            case 'auth/weak-password':
+                                errorMsg = 'La contraseña es demasiado débil.';
+                                break;
+                            default:
+                                errorMsg = 'Error al registrar usuario: ' + error.message;
+                        }
+                        errorMessage.textContent = errorMsg;
+                    });
+            });
+
+            // Evento para cerrar modal
+            closeModalBtn.addEventListener('click', () => {
+                // Redirigir a página de login
+                window.location.href = 'login-con-firebase.html';
+            });
         });
     </script>
     
