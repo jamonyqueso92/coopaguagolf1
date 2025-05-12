@@ -78,7 +78,7 @@
                             <div id="errorMessage" class="text-danger mt-2 text-center"></div>
                         </form>
                         <div class="text-center mt-3">
-                            <p>¿Ya tienes cuenta? <a href="login-con-firebase.html">Inicia sesión aquí</a></p>
+                            <p>¿Ya tenés cuenta? <a href="login-con-firebase.html">Iniciá sesión aquí</a></p>
                         </div>
                     </div>
                 </div>
@@ -92,13 +92,15 @@
             <div class="modal-content">
                 <div class="modal-header bg-success text-white">
                     <h5 class="modal-title">Registro Exitoso</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center">
-                    <p>Se ha creado tu cuenta correctamente.</p>
-                    <p>Por favor, verifica tu correo electrónico.</p>
+                    <p>¡Genial! Tu cuenta ha sido creada correctamente.</p>
+                    <p>Te enviamos un correo de verificación. Por favor, revisá tu bandeja de entrada (incluyendo spam).</p>
+                    <p class="text-muted small">No olvides verificar tu correo para activar completamente tu cuenta.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="closeModal">Aceptar</button>
+                    <button type="button" class="btn btn-success" id="closeModal">Entendido</button>
                 </div>
             </div>
         </div>
@@ -202,20 +204,20 @@
                         successModal.show();
                     })
                     .catch((error) => {
-                        // Manejar errores
+                        // Manejar errores con mensajes más amigables
                         let errorMsg = '';
                         switch(error.code) {
                             case 'auth/email-already-in-use':
-                                errorMsg = 'Este correo electrónico ya está registrado.';
+                                errorMsg = 'Ups... Este correo ya está registrado. ¿Querés iniciar sesión?';
                                 break;
                             case 'auth/invalid-email':
-                                errorMsg = 'Correo electrónico no válido.';
+                                errorMsg = 'El correo electrónico no es válido. Revisá que esté bien escrito.';
                                 break;
                             case 'auth/weak-password':
-                                errorMsg = 'La contraseña es demasiado débil.';
+                                errorMsg = 'La contraseña es muy débil. Seguí los requisitos mostrados.';
                                 break;
                             default:
-                                errorMsg = 'Error al registrar usuario: ' + error.message;
+                                errorMsg = 'Hubo un problema con el registro. Por favor, intentá de nuevo.';
                         }
                         errorMessage.textContent = errorMsg;
                     });
