@@ -232,17 +232,34 @@
                 console.error('Error al inicializar el modal:', error);
             }
             
+            // Verificar si hay un token de usuario en localStorage
+            const hasAuthToken = localStorage.getItem('firebaseAuthToken');
+            
             // Comprobar si hay usuario autenticado
             firebase.auth().onAuthStateChanged((user) => {
                 // Ocultar overlay de carga
                 loadingOverlay.style.display = 'none';
                 
                 if (user) {
-                    // Usuario ya conectado, redireccionar al dashboard
+                    // Usuario ya conectado, guardar token en localStorage
                     console.log('Usuario ya autenticado:', user.email);
-                    window.location.href = 'dashboard.html';
+                    user.getIdToken().then(token => {
+                        localStorage.setItem('firebaseAuthToken', token);
+                        localStorage.setItem('firebaseAuthUser', JSON.stringify({
+                            email: user.email,
+                            uid: user.uid,
+                            displayName: user.displayName || ''
+                        }));
+                        
+                        // Redireccionar al dashboard
+                        window.location.href = 'dashboard.html';
+                    });
                 } else {
                     console.log('No hay usuario autenticado');
+                    // Limpiar token si existe
+                    localStorage.removeItem('firebaseAuthToken');
+                    localStorage.removeItem('firebaseAuthUser');
+                    
                     // Mostrar contenido del login
                     container.style.display = 'block';
                 }
@@ -335,12 +352,24 @@
                     })
                     .then((userCredential) => {
                         // Inicio de sesión exitoso
-                        showSuccess(successMessage, '¡Inicio de sesión exitoso! Redirigiendo...');
+                        const user = userCredential.user;
                         
-                        // Redireccionar después de un breve retraso
-                        setTimeout(() => {
-                            window.location.href = 'dashboard.html';
-                        }, 1500);
+                        // Guardar token en localStorage
+                        return user.getIdToken(true).then(token => {
+                            localStorage.setItem('firebaseAuthToken', token);
+                            localStorage.setItem('firebaseAuthUser', JSON.stringify({
+                                email: user.email,
+                                uid: user.uid,
+                                displayName: user.displayName || ''
+                            }));
+                            
+                            showSuccess(successMessage, '¡Inicio de sesión exitoso! Redirigiendo...');
+                            
+                            // Redireccionar después de un breve retraso
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
+                        });
                     })
                     .catch((error) => {
                         // Manejar errores
