@@ -23,9 +23,35 @@
         .password-requirement.valid .check-icon {
             opacity: 1;
         }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            display: none;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
     </style>
 </head>
 <body>
+    <!-- Overlay de carga -->
+    <div id="loading-overlay">
+        <div class="spinner-border text-primary mb-3" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <h4 id="loading-message">Registrando usuario...</h4>
+    </div>
+
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -92,26 +118,6 @@
         </div>
     </div>
 
-    <!-- Modal de Verificación de Correo -->
-    <div class="modal fade" id="emailVerificationModal" tabindex="-1" aria-labelledby="emailVerificationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="emailVerificationModalLabel">Verificación de Correo Electrónico</h5>
-                </div>
-                <div class="modal-body text-center">
-                    <i class="bi bi-envelope-check text-primary" style="font-size: 3rem;"></i>
-                    <p class="mt-3">Se ha enviado un enlace de verificación a su correo electrónico.</p>
-                    <p class="text-muted">Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta.</p>
-                    <p class="text-warning">Si no encuentra el correo, revise su carpeta de spam.</p>
-                </div>
-                <div class="modal-footer">
-                    <a href="login-con-firebase.html" class="btn btn-primary" id="closeVerificationModal">Entendido</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -126,6 +132,8 @@
         const confirmPasswordInput = document.getElementById('confirmPassword');
         const submitBtn = document.getElementById('submitBtn');
         const errorMessage = document.getElementById('errorMessage');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingMessage = document.getElementById('loading-message');
 
         // Requisitos de contraseña
         const lengthReq = document.getElementById('length-req');
@@ -133,22 +141,18 @@
         const lowercaseReq = document.getElementById('lowercase-req');
         const numberReq = document.getElementById('number-req');
         const specialReq = document.getElementById('special-req');
-
-        // Modal de verificación - Inicialización inmediata para evitar problemas
-        let emailVerificationModal;
-        // Inicializar el modal inmediatamente si el DOM ya está cargado
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeModal);
-        } else {
-            initializeModal();
-        }
-        
-        function initializeModal() {
-            emailVerificationModal = new bootstrap.Modal(document.getElementById('emailVerificationModal'));
-        }
         
         // Establecer idioma para Firebase Auth
         firebase.auth().languageCode = 'es';
+        
+        function showLoading(message) {
+            loadingMessage.textContent = message || 'Procesando...';
+            loadingOverlay.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
         
         function validatePassword() {
             const password = passwordInput.value;
@@ -200,6 +204,7 @@
             const password = passwordInput.value;
             
             errorMessage.textContent = '';
+            showLoading('Registrando usuario...');
             
             // Crear usuario en Firebase
             firebase.auth().createUserWithEmailAndPassword(email, password)
@@ -212,12 +217,14 @@
                         handleCodeInApp: true
                     };
                     
+                    showLoading('Enviando correo de verificación...');
                     // Enviar correo de verificación con configuración personalizada
                     return user.sendEmailVerification(actionCodeSettings);
                 })
                 .then(() => {
                     // Guardar información adicional en Firestore
                     const user = firebase.auth().currentUser;
+                    showLoading('Guardando información...');
                     return firebase.firestore().collection('usuarios').doc(user.uid).set({
                         nombre: name,
                         email: email,
@@ -227,19 +234,20 @@
                     });
                 })
                 .then(() => {
-                    // Mostrar modal de verificación
-                    document.getElementById('registerForm').reset();
+                    showLoading('¡Registro exitoso! Redirigiendo a inicio de sesión...');
                     
-                    // Asegurarnos que el modal esté inicializado antes de mostrarlo
-                    if (!emailVerificationModal) {
-                        initializeModal();
-                    }
-                    emailVerificationModal.show();
-                    
-                    console.log("Registro exitoso, modal mostrado");
+                    // Cerrar sesión para asegurar que el usuario tenga que iniciar sesión después de verificar
+                    return firebase.auth().signOut();
+                })
+                .then(() => {
+                    // Redireccionar después de un breve retraso para mostrar mensaje
+                    setTimeout(function() {
+                        window.location.href = 'login-con-firebase.html?registered=true';
+                    }, 2000);
                 })
                 .catch((error) => {
                     // Manejar errores
+                    hideLoading();
                     console.error("Error en registro:", error);
                     let errorMsg = '';
                     switch(error.code) {
@@ -258,18 +266,6 @@
                     errorMessage.textContent = errorMsg;
                 });
         });
-
-        // Evento para cerrar modal y redireccionar
-        document.getElementById('closeVerificationModal').addEventListener('click', function() {
-            console.log("Botón 'Entendido' presionado");
-            // Cerrar el modal
-            if (emailVerificationModal) {
-                emailVerificationModal.hide();
-            }
-            // Redireccionar a la página de login
-            console.log("Redireccionando a login-con-firebase.html");
-            window.location.href = 'login-con-firebase.html';
-        });
         
         // Comprobar si ya hay sesión iniciada
         firebase.auth().onAuthStateChanged((user) => {
@@ -278,6 +274,11 @@
                 window.location.href = 'dashboard.html';
             }
         });
+        
+        // Verificar si venimos de un registro exitoso
+        if (new URLSearchParams(window.location.search).get('registered') === 'true') {
+            alert('Registro exitoso. Por favor, verifica tu correo electrónico y luego inicia sesión.');
+        }
     </script>
     
     <!-- Bootstrap Icons -->
