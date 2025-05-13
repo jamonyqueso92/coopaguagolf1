@@ -128,6 +128,9 @@
     
     <!-- Lógica de registro -->
     <script>
+        // Establecer idioma para Firebase Auth
+        firebase.auth().languageCode = 'es';
+        
         const passwordInput = document.getElementById('password');
         const confirmPasswordInput = document.getElementById('confirmPassword');
         const submitBtn = document.getElementById('submitBtn');
@@ -141,9 +144,6 @@
         const lowercaseReq = document.getElementById('lowercase-req');
         const numberReq = document.getElementById('number-req');
         const specialReq = document.getElementById('special-req');
-        
-        // Establecer idioma para Firebase Auth
-        firebase.auth().languageCode = 'es';
         
         function showLoading(message) {
             loadingMessage.textContent = message || 'Procesando...';
@@ -183,11 +183,11 @@
             
             // Habilitar botón solo si todos los requisitos se cumplen
             const isAllValid = isLengthValid && 
-                               hasUppercase && 
-                               hasLowercase && 
-                               hasNumber && 
-                               hasSpecialChar && 
-                               isConfirmValid;
+                              hasUppercase && 
+                              hasLowercase && 
+                              hasNumber && 
+                              hasSpecialChar && 
+                              isConfirmValid;
             
             submitBtn.disabled = !isAllValid;
         }
@@ -196,7 +196,7 @@
         passwordInput.addEventListener('input', validatePassword);
         confirmPasswordInput.addEventListener('input', validatePassword);
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
@@ -206,67 +206,65 @@
             errorMessage.textContent = '';
             showLoading('Registrando usuario...');
             
-            // Crear usuario en Firebase
-            firebase.auth().createUserWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    
-                    // Configurar URL de continuación para redireccionar al index
-                    const actionCodeSettings = {
-                        url: window.location.origin + '/index.html',
-                        handleCodeInApp: true
-                    };
-                    
-                    showLoading('Enviando correo de verificación...');
-                    // Enviar correo de verificación con configuración personalizada
-                    return user.sendEmailVerification(actionCodeSettings);
-                })
-                .then(() => {
-                    // Guardar información adicional en Firestore
-                    const user = firebase.auth().currentUser;
-                    showLoading('Guardando información...');
-                    return firebase.firestore().collection('usuarios').doc(user.uid).set({
+            try {
+                // Crear usuario en Firebase
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Configurar URL de continuación para redireccionar al index
+                const actionCodeSettings = {
+                    url: window.location.origin + '/index.html',
+                    handleCodeInApp: true
+                };
+                
+                // Enviar correo de verificación
+                await user.sendEmailVerification(actionCodeSettings);
+                
+                try {
+                    // Intentar guardar en Firestore pero no esperamos a que termine
+                    firebase.firestore().collection('usuarios').doc(user.uid).set({
                         nombre: name,
                         email: email,
                         fechaRegistro: new Date(),
-                        rol: 'usuario', // Por defecto, asigna rol de usuario
+                        rol: 'usuario',
                         verificado: false
-                    });
-                })
-                .then(() => {
-                    // Ocultar el loading overlay
-                    hideLoading();
+                    }).catch(err => console.log("Error al guardar en Firestore, pero continuamos:", err));
                     
-                    // Mostrar alerta sobre verificación de correo
-                    alert('Se ha enviado un enlace de verificación a su correo electrónico. Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta.');
+                    // Cerramos sesión independientemente del resultado de Firestore
+                    await firebase.auth().signOut();
                     
-                    // Cerrar sesión para asegurar que el usuario tenga que iniciar sesión después de verificar
-                    return firebase.auth().signOut();
-                })
-                .then(() => {
-                    // Redireccionar inmediatamente después de que el usuario cierre la alerta
-                    window.location.href = 'login-con-firebase.html';
-                })
-                .catch((error) => {
-                    // Manejar errores
-                    hideLoading();
-                    console.error("Error en registro:", error);
-                    let errorMsg = '';
-                    switch(error.code) {
-                        case 'auth/email-already-in-use':
-                            errorMsg = 'Este correo electrónico ya está registrado.';
-                            break;
-                        case 'auth/invalid-email':
-                            errorMsg = 'Correo electrónico no válido.';
-                            break;
-                        case 'auth/weak-password':
-                            errorMsg = 'La contraseña es demasiado débil.';
-                            break;
-                        default:
-                            errorMsg = 'Error al registrar usuario: ' + error.message;
-                    }
-                    errorMessage.textContent = errorMsg;
-                });
+                } catch (firestoreError) {
+                    console.error("Error con Firestore:", firestoreError);
+                    // Continuamos incluso si hay error en Firestore
+                }
+                
+                // Ocultamos el overlay y mostramos el mensaje
+                hideLoading();
+                alert("Se ha enviado un enlace de verificación a su correo electrónico. Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta.");
+                
+                // Redireccionar a la página de login
+                window.location.href = 'login-con-firebase.html';
+                
+            } catch (error) {
+                // Manejar errores de autenticación
+                hideLoading();
+                console.error("Error en registro:", error);
+                let errorMsg = '';
+                switch(error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMsg = 'Este correo electrónico ya está registrado.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMsg = 'Correo electrónico no válido.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMsg = 'La contraseña es demasiado débil.';
+                        break;
+                    default:
+                        errorMsg = 'Error al registrar usuario: ' + error.message;
+                }
+                errorMessage.textContent = errorMsg;
+            }
         });
         
         // Comprobar si ya hay sesión iniciada
@@ -276,11 +274,6 @@
                 window.location.href = 'dashboard.html';
             }
         });
-        
-        // Verificar si venimos de un registro exitoso
-        if (new URLSearchParams(window.location.search).get('registered') === 'true') {
-            alert('Por favor, verifica tu correo electrónico y luego inicia sesión.');
-        }
     </script>
     
     <!-- Bootstrap Icons -->
