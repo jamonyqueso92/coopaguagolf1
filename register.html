@@ -234,16 +234,18 @@
                     });
                 })
                 .then(() => {
-                    showLoading('¡Registro exitoso! Redirigiendo a inicio de sesión...');
+                    // Ocultar el loading overlay
+                    hideLoading();
+                    
+                    // Mostrar alerta sobre verificación de correo
+                    alert('Se ha enviado un enlace de verificación a su correo electrónico. Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta.');
                     
                     // Cerrar sesión para asegurar que el usuario tenga que iniciar sesión después de verificar
                     return firebase.auth().signOut();
                 })
                 .then(() => {
-                    // Redireccionar después de un breve retraso para mostrar mensaje
-                    setTimeout(function() {
-                        window.location.href = 'login-con-firebase.html?registered=true';
-                    }, 2000);
+                    // Redireccionar inmediatamente después de que el usuario cierre la alerta
+                    window.location.href = 'login-con-firebase.html';
                 })
                 .catch((error) => {
                     // Manejar errores
@@ -277,7 +279,7 @@
         
         // Verificar si venimos de un registro exitoso
         if (new URLSearchParams(window.location.search).get('registered') === 'true') {
-            alert('Registro exitoso. Por favor, verifica tu correo electrónico y luego inicia sesión.');
+            alert('Por favor, verifica tu correo electrónico y luego inicia sesión.');
         }
     </script>
     
