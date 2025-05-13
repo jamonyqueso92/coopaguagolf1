@@ -63,8 +63,8 @@
                                 <label for="password" class="form-label">Contraseña:</label>
                                 <div class="input-group">
                                     <input type="password" class="form-control" id="password" name="password" required
-                                           placeholder="Contraseña">
-                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar contraseña">
+                                           placeholder="Contraseña" autocomplete="current-password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar contraseña" tabindex="-1">
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
@@ -210,8 +210,8 @@
                 emailInput.classList.add('is-valid');
             }
             
-            // Validar password
-            if (!passwordInput.value || passwordInput.value.length < 6) {
+            // Validar password (solo verificamos que no esté vacío)
+            if (!passwordInput.value) {
                 passwordInput.classList.add('is-invalid');
                 isValid = false;
             } else {
@@ -242,14 +242,15 @@
             // Mostrar indicador de carga
             toggleLoading(loginButton, loginSpinner, true);
             
-            // Configurar persistencia según la opción "Recordarme"
+            // Intentar inicio de sesión con Firebase
+            // Primero configuramos la persistencia
             const persistence = rememberMe ? 
                 firebase.auth.Auth.Persistence.LOCAL : 
                 firebase.auth.Auth.Persistence.SESSION;
-                
+            
             firebase.auth().setPersistence(persistence)
                 .then(() => {
-                    // Intentar inicio de sesión con Firebase
+                    // Luego intentamos el inicio de sesión
                     return firebase.auth().signInWithEmailAndPassword(email, password);
                 })
                 .then((userCredential) => {
@@ -259,13 +260,13 @@
                     // Redireccionar después de un breve retraso
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
-                    }, 1000);
+                    }, 1500);
                 })
                 .catch((error) => {
                     // Manejar errores
-                    let errorMsg = '';
                     console.error('Error de autenticación:', error.code, error.message);
                     
+                    let errorMsg = '';
                     switch(error.code) {
                         case 'auth/user-not-found':
                             errorMsg = 'No existe una cuenta con este correo electrónico.';
@@ -282,8 +283,11 @@
                         case 'auth/invalid-email':
                             errorMsg = 'El formato del correo electrónico no es válido.';
                             break;
+                        case 'auth/invalid-credential':
+                            errorMsg = 'Credenciales incorrectas. Revisa tu correo y contraseña.';
+                            break;
                         default:
-                            errorMsg = 'Error al iniciar sesión. Por favor, inténtalo de nuevo.';
+                            errorMsg = 'Error al iniciar sesión: ' + error.message;
                     }
                     
                     showError(errorMessage, errorMsg);
@@ -295,20 +299,26 @@
         });
         
         // Comprobar si ya hay sesión iniciada
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // Usuario ya conectado, redireccionar al dashboard
-                console.log('Usuario ya autenticado:', user.email);
-                window.location.href = 'dashboard.html';
-            } else {
-                console.log('No hay usuario autenticado');
-                // Hacer visible el formulario si estaba oculto durante la comprobación
-                document.querySelector('.container').style.display = 'block';
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hacer invisible temporalmente el contenedor principal mientras se verifica la autenticación
+            document.querySelector('.container').style.display = 'none';
+            
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    // Usuario ya conectado, redireccionar al dashboard
+                    console.log('Usuario ya autenticado:', user.email);
+                    window.location.href = 'dashboard.html';
+                } else {
+                    console.log('No hay usuario autenticado');
+                    // Hacer visible el formulario si estaba oculto durante la comprobación
+                    document.querySelector('.container').style.display = 'block';
+                }
+            });
         });
         
         // Mostrar/ocultar contraseña
-        togglePasswordBtn.addEventListener('click', function() {
+        togglePasswordBtn.addEventListener('click', function(e) {
+            e.preventDefault(); // Evitar comportamiento predeterminado del botón
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
