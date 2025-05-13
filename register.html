@@ -93,7 +93,7 @@
     </div>
 
     <!-- Modal de Verificación de Correo -->
-    <div class="modal fade" id="emailVerificationModal" tabindex="-1" aria-labelledby="emailVerificationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="emailVerificationModal" tabindex="-1" aria-labelledby="emailVerificationModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
@@ -106,7 +106,7 @@
                     <p class="text-warning">Si no encuentra el correo, revise su carpeta de spam.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="closeVerificationModal">Entendido</button>
+                    <a href="login-con-firebase.html" class="btn btn-primary" id="closeVerificationModal">Entendido</a>
                 </div>
             </div>
         </div>
@@ -134,11 +134,18 @@
         const numberReq = document.getElementById('number-req');
         const specialReq = document.getElementById('special-req');
 
-        // Modal de verificación
+        // Modal de verificación - Inicialización inmediata para evitar problemas
         let emailVerificationModal;
-        document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar el modal inmediatamente si el DOM ya está cargado
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeModal);
+        } else {
+            initializeModal();
+        }
+        
+        function initializeModal() {
             emailVerificationModal = new bootstrap.Modal(document.getElementById('emailVerificationModal'));
-        });
+        }
         
         // Establecer idioma para Firebase Auth
         firebase.auth().languageCode = 'es';
@@ -222,7 +229,14 @@
                 .then(() => {
                     // Mostrar modal de verificación
                     document.getElementById('registerForm').reset();
+                    
+                    // Asegurarnos que el modal esté inicializado antes de mostrarlo
+                    if (!emailVerificationModal) {
+                        initializeModal();
+                    }
                     emailVerificationModal.show();
+                    
+                    console.log("Registro exitoso, modal mostrado");
                 })
                 .catch((error) => {
                     // Manejar errores
@@ -247,12 +261,14 @@
 
         // Evento para cerrar modal y redireccionar
         document.getElementById('closeVerificationModal').addEventListener('click', function() {
+            console.log("Botón 'Entendido' presionado");
             // Cerrar el modal
-            emailVerificationModal.hide();
+            if (emailVerificationModal) {
+                emailVerificationModal.hide();
+            }
             // Redireccionar a la página de login
-            setTimeout(function() {
-                window.location.href = 'login-con-firebase.html';
-            }, 500); // Pequeño retraso para asegurar que el modal se cierre completamente
+            console.log("Redireccionando a login-con-firebase.html");
+            window.location.href = 'login-con-firebase.html';
         });
         
         // Comprobar si ya hay sesión iniciada
