@@ -41,6 +41,14 @@
             width: 3rem;
             height: 3rem;
         }
+        #success-message {
+            display: none;
+        }
+        .success-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -60,6 +68,7 @@
                         <h2>Crear Cuenta</h2>
                     </div>
                     <div class="card-body">
+                        <!-- Formulario de registro -->
                         <form id="registerForm" class="mt-4">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nombre completo:</label>
@@ -104,12 +113,31 @@
                             </div>
                             <div id="errorMessage" class="text-danger mt-2 text-center"></div>
                         </form>
-                        <div class="text-center mt-3">
+                        
+                        <!-- Mensaje de éxito -->
+                        <div id="success-message" class="text-center py-4">
+                            <div class="success-icon">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h3 class="mb-3">¡Registro Exitoso!</h3>
+                            <p class="mb-3">Se ha enviado un enlace de verificación a su correo electrónico.</p>
+                            <p class="mb-4">Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta. Una vez verificado, puede cerrar esta ventana.</p>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-secondary" onclick="window.close()">
+                                    <i class="bi bi-x-lg"></i> Cerrar esta ventana
+                                </button>
+                                <a href="../index.html" class="btn btn-primary">
+                                    <i class="bi bi-house"></i> Ir a la página principal
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-3" id="login-link">
                             <p>¿Ya tienes cuenta? <a href="login-con-firebase.html">Inicia sesión aquí</a></p>
                         </div>
                     </div>
                 </div>
-                <div class="text-center mt-3">
+                <div class="text-center mt-3" id="back-button">
                     <a href="../index.html" class="btn btn-outline-secondary btn-sm">
                         <i class="bi bi-arrow-left"></i> Volver a inicio
                     </a>
@@ -137,6 +165,10 @@
         const errorMessage = document.getElementById('errorMessage');
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingMessage = document.getElementById('loading-message');
+        const registerForm = document.getElementById('registerForm');
+        const successMessage = document.getElementById('success-message');
+        const loginLink = document.getElementById('login-link');
+        const backButton = document.getElementById('back-button');
 
         // Requisitos de contraseña
         const lengthReq = document.getElementById('length-req');
@@ -152,6 +184,12 @@
         
         function hideLoading() {
             loadingOverlay.style.display = 'none';
+        }
+        
+        function showSuccessMessage() {
+            registerForm.style.display = 'none';
+            loginLink.style.display = 'none';
+            successMessage.style.display = 'block';
         }
         
         function validatePassword() {
@@ -238,12 +276,11 @@
                     // Continuamos incluso si hay error en Firestore
                 }
                 
-                // Ocultamos el overlay y mostramos el mensaje
+                // Ocultamos el overlay
                 hideLoading();
-                alert("Se ha enviado un enlace de verificación a su correo electrónico. Por favor, revise su bandeja de entrada y haga clic en el enlace para activar su cuenta.");
                 
-                // Redireccionar a la página de login
-                window.location.href = 'login-con-firebase.html';
+                // Mostrar mensaje de éxito en la misma ventana
+                showSuccessMessage();
                 
             } catch (error) {
                 // Manejar errores de autenticación
