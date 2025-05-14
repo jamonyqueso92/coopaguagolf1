@@ -180,15 +180,36 @@
     <!-- Configuración Firebase -->
     <script src="../firebase-config.js"></script>
     
-    <!-- Script común para todas las páginas del panel - NUEVO -->
+    <!-- Script común para todas las páginas del panel - CORREGIDO -->
     <script src="../js/auth-check.js"></script>
     
+    <!-- Script inline para depuración -->
     <script>
+        console.log('Dashboard cargando...');
+        
+        // Verificar si firebase está disponible
+        if (typeof firebase !== 'undefined') {
+            console.log('Firebase disponible');
+        } else {
+            console.error('Firebase no está disponible');
+        }
+        
+        // Verificar si ya hay un token de autenticación
+        const token = localStorage.getItem('firebaseAuthToken');
+        if (token) {
+            console.log('Token encontrado en localStorage');
+        } else {
+            console.log('No hay token en localStorage');
+        }
+        
         // Cargar datos del usuario desde Firestore
         function cargarDatosUsuario(userId) {
+            console.log('Cargando datos del usuario:', userId);
+            
             firebase.firestore().collection('usuarios').doc(userId).get()
                 .then((doc) => {
                     if (doc.exists) {
+                        console.log('Datos del usuario encontrados:', doc.data());
                         const userData = doc.data();
                         
                         // Mostrar próximo vencimiento si existe
@@ -218,15 +239,30 @@
                         } else {
                             tablaConsumos.innerHTML = '<tr><td colspan="2" class="text-center">No hay datos de consumo disponibles.</td></tr>';
                         }
+                    } else {
+                        console.log('No se encontró documento del usuario');
+                        document.getElementById('proximoVencimiento').textContent = 'No hay datos disponibles.';
                     }
                 })
                 .catch((error) => {
                     console.error('Error al cargar datos del usuario:', error);
+                    document.getElementById('proximoVencimiento').textContent = 'Error al cargar datos.';
                 });
         }
 
-        // Ejecutar esta función después de que auth-check.js haya verificado la autenticación
+        // Respaldo por si falla el evento
+        window.addEventListener('load', function() {
+            console.log('Verificando autenticación manualmente...');
+            const user = firebase.auth().currentUser;
+            if (user) {
+                console.log('Usuario autenticado manualmente:', user.uid);
+                cargarDatosUsuario(user.uid);
+            }
+        });
+
+        // Eventos personalizados
         document.addEventListener('userAuthenticated', function(e) {
+            console.log('Evento userAuthenticated recibido con ID:', e.detail.userId);
             cargarDatosUsuario(e.detail.userId);
         });
     </script>
