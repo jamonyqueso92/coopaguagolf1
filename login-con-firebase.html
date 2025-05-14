@@ -1,81 +1,528 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Cooperativa</title>
+    
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="../css/styles.css">
+    
+    <style>
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 5px;
+        }
+        .form-feedback {
+            display: none;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+        }
+        .login-card {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .login-logo {
+            max-width: 100px;
+            margin: 0 auto 20px;
+        }
+        .success-message {
+            color: #198754;
+        }
+        .card {
+            border-radius: 10px;
+        }
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+        }
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Iniciar Sesión</h2>
-        <form id="loginForm">
-            <div class="mb-3">
-                <label for="email" class="form-label">Correo Electrónico</label>
-                <input type="email" class="form-control" id="email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" required>
-            </div>
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="rememberMe">
-                <label class="form-check-label" for="rememberMe">Recordarme</label>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
-            <div id="errorMessage" class="alert alert-danger mt-3 d-none"></div>
-        </form>
+    <!-- Overlay de carga inicial -->
+    <div id="loadingOverlay">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
     </div>
 
+    <div class="container mt-5" style="display:none;">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow login-card">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <!-- Aquí puedes agregar tu logo si lo deseas -->
+                        <!-- <img src="../img/logo.png" alt="Logo" class="login-logo"> -->
+                        <h2>Iniciar Sesión</h2>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="loginForm" class="mt-3">
+                            <!-- Email input -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo Electrónico:</label>
+                                <input type="email" class="form-control" id="email" name="email" required 
+                                       placeholder="correo@ejemplo.com">
+                                <div class="invalid-feedback">
+                                    Por favor ingresa un correo electrónico válido.
+                                </div>
+                            </div>
+                            
+                            <!-- Password input -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña:</label>
+                                <div class="input-group">
+                                    <input type="password" class="form-control" id="password" name="password" required
+                                           placeholder="Contraseña" autocomplete="current-password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" title="Mostrar contraseña" tabindex="-1">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Por favor ingresa tu contraseña.
+                                </div>
+                            </div>
+                            
+                            <!-- Remember me checkbox -->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Recordarme</label>
+                            </div>
+                            
+                            <!-- Submit button -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary py-2" id="loginButton">
+                                    <span id="loginSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                    Iniciar Sesión
+                                </button>
+                            </div>
+                            
+                            <!-- Status messages -->
+                            <div id="errorMessage" class="alert alert-danger mt-3 d-none"></div>
+                            <div id="successMessage" class="alert alert-success mt-3 d-none"></div>
+                        </form>
+                        
+                        <!-- Links -->
+                        <div class="text-center mt-4">
+                            <p>¿No tienes cuenta? <a href="register.html" class="text-decoration-none">Regístrate aquí</a></p>
+                            <p>¿Olvidaste tu contraseña? <a href="#" id="resetPassword" class="text-decoration-none">Recuperar contraseña</a></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="../index.html" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Volver a inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Reset Modal -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Recuperar Contraseña</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resetPasswordForm">
+                        <div class="mb-3">
+                            <label for="resetEmail" class="form-label">Correo Electrónico:</label>
+                            <input type="email" class="form-control" id="resetEmail" required>
+                            <div class="form-text">Ingresa el correo electrónico asociado a tu cuenta.</div>
+                        </div>
+                        <div id="resetErrorMessage" class="alert alert-danger d-none"></div>
+                        <div id="resetSuccessMessage" class="alert alert-success d-none"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="sendResetEmail">
+                        <span id="resetSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                        Enviar Correo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Primero cargar jQuery (si es necesario) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <!-- Luego cargar Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Después cargar Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    
+    <!-- Configuración Firebase -->
     <script src="../firebase-config.js"></script>
-
+    
+    <!-- Finalmente, nuestro código JavaScript -->
     <script>
-        const errorMessage = document.getElementById('errorMessage');
-        const loginForm = document.getElementById('loginForm');
-
-        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            errorMessage.classList.add('d-none');
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-
-            const persistence = rememberMe ?
-                firebase.auth.Auth.Persistence.LOCAL :
-                firebase.auth.Auth.Persistence.SESSION;
-
-            firebase.auth().setPersistence(persistence)
-                .then(() => firebase.auth().signInWithEmailAndPassword(email, password))
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    if (!user.emailVerified) {
-                        firebase.auth().signOut();
-                        throw new Error('Debes verificar tu correo electrónico antes de ingresar.');
-                    } else {
-                        return user.getIdToken().then((token) => {
+        // Esperar a que se cargue el DOM
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM cargado completamente');
+            
+            // Variables para elementos del DOM
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const container = document.querySelector('.container');
+            const loginForm = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            const loginButton = document.getElementById('loginButton');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const rememberMeCheckbox = document.getElementById('rememberMe');
+            const resetPasswordLink = document.getElementById('resetPassword');
+            const resetEmailInput = document.getElementById('resetEmail');
+            const resetErrorMessage = document.getElementById('resetErrorMessage');
+            const resetSuccessMessage = document.getElementById('resetSuccessMessage');
+            const sendResetEmailBtn = document.getElementById('sendResetEmail');
+            const resetSpinner = document.getElementById('resetSpinner');
+            
+            // Variable para el modal
+            let resetPasswordModal;
+            
+            // Verificar si Firebase y Bootstrap están disponibles
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase no está definido');
+                showError(errorMessage, 'Error al cargar Firebase. Por favor, recarga la página.');
+                loadingOverlay.style.display = 'none';
+                container.style.display = 'block';
+                return;
+            }
+            
+            if (typeof bootstrap === 'undefined') {
+                console.error('Bootstrap no está definido');
+                showError(errorMessage, 'Error al cargar Bootstrap. Por favor, recarga la página.');
+                loadingOverlay.style.display = 'none';
+                container.style.display = 'block';
+                return;
+            }
+            
+            console.log('Firebase y Bootstrap cargados correctamente');
+            
+            // Inicializar modal
+            try {
+                resetPasswordModal = new bootstrap.Modal(document.getElementById('resetPasswordModal'));
+                console.log('Modal inicializado correctamente');
+            } catch (error) {
+                console.error('Error al inicializar el modal:', error);
+            }
+            
+            // Verificar si hay un token de usuario en localStorage
+            const hasAuthToken = localStorage.getItem('firebaseAuthToken');
+            
+            // Comprobar si hay usuario autenticado
+            firebase.auth().onAuthStateChanged((user) => {
+                // Ocultar overlay de carga
+                loadingOverlay.style.display = 'none';
+                
+                if (user) {
+                    // Usuario ya conectado, guardar token en localStorage
+                    console.log('Usuario ya autenticado:', user.email);
+                    user.getIdToken().then(token => {
+                        localStorage.setItem('firebaseAuthToken', token);
+                        localStorage.setItem('firebaseAuthUser', JSON.stringify({
+                            email: user.email,
+                            uid: user.uid,
+                            displayName: user.displayName || ''
+                        }));
+                        
+                        // Redireccionar al dashboard
+                        window.location.href = 'dashboard.html';
+                    });
+                } else {
+                    console.log('No hay usuario autenticado');
+                    // Limpiar token si existe
+                    localStorage.removeItem('firebaseAuthToken');
+                    localStorage.removeItem('firebaseAuthUser');
+                    
+                    // Mostrar contenido del login
+                    container.style.display = 'block';
+                }
+            });
+            
+            // Función para mostrar mensajes de error
+            function showError(element, message) {
+                element.textContent = message;
+                element.classList.remove('d-none');
+                setTimeout(() => {
+                    element.classList.add('d-none');
+                }, 5000); // El mensaje desaparece después de 5 segundos
+            }
+            
+            // Función para mostrar mensajes de éxito
+            function showSuccess(element, message) {
+                element.textContent = message;
+                element.classList.remove('d-none');
+                setTimeout(() => {
+                    element.classList.add('d-none');
+                }, 5000);
+            }
+            
+            // Función para mostrar/ocultar indicador de carga
+            function toggleLoading(button, spinner, isLoading) {
+                if (isLoading) {
+                    button.disabled = true;
+                    spinner.classList.remove('d-none');
+                } else {
+                    button.disabled = false;
+                    spinner.classList.add('d-none');
+                }
+            }
+            
+            // Validar formulario de login
+            function validateLoginForm() {
+                let isValid = true;
+                
+                // Validar email
+                if (!emailInput.value || !emailInput.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                    emailInput.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    emailInput.classList.remove('is-invalid');
+                    emailInput.classList.add('is-valid');
+                }
+                
+                // Validar password (solo verificamos que no esté vacío)
+                if (!passwordInput.value) {
+                    passwordInput.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    passwordInput.classList.remove('is-invalid');
+                    passwordInput.classList.add('is-valid');
+                }
+                
+                return isValid;
+            }
+            
+            // Evento de envío del formulario de login
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Ocultar mensajes anteriores
+                errorMessage.classList.add('d-none');
+                successMessage.classList.add('d-none');
+                
+                // Validar formulario
+                if (!validateLoginForm()) {
+                    return;
+                }
+                
+                const email = emailInput.value;
+                const password = passwordInput.value;
+                const rememberMe = rememberMeCheckbox.checked;
+                
+                // Mostrar indicador de carga
+                toggleLoading(loginButton, loginSpinner, true);
+                
+                // Intentar inicio de sesión con Firebase
+                // Primero configuramos la persistencia
+                const persistence = rememberMe ? 
+                    firebase.auth.Auth.Persistence.LOCAL : 
+                    firebase.auth.Auth.Persistence.SESSION;
+                
+                firebase.auth().setPersistence(persistence)
+                    .then(() => {
+                        // Luego intentamos el inicio de sesión
+                        return firebase.auth().signInWithEmailAndPassword(email, password);
+                    })
+                    .then((userCredential) => {
+                        // Inicio de sesión exitoso
+                        const user = userCredential.user;
+                        
+                        // Guardar token en localStorage
+                        return user.getIdToken(true).then(token => {
                             localStorage.setItem('firebaseAuthToken', token);
                             localStorage.setItem('firebaseAuthUser', JSON.stringify({
                                 email: user.email,
                                 uid: user.uid,
                                 displayName: user.displayName || ''
                             }));
-                            window.location.replace('dashboard.html');
+                            
+                            showSuccess(successMessage, '¡Inicio de sesión exitoso! Redirigiendo...');
+                            
+                            // Redireccionar después de un breve retraso
+                            setTimeout(() => {
+                                window.location.href = 'dashboard.html';
+                            }, 1500);
                         });
+                    })
+                    .catch((error) => {
+                        // Manejar errores
+                        console.error('Error de autenticación:', error.code, error.message);
+                        
+                        let errorMsg = '';
+                        switch(error.code) {
+                            case 'auth/user-not-found':
+                                errorMsg = 'No existe una cuenta con este correo electrónico.';
+                                break;
+                            case 'auth/wrong-password':
+                                errorMsg = 'Contraseña incorrecta.';
+                                break;
+                            case 'auth/too-many-requests':
+                                errorMsg = 'Demasiados intentos fallidos. Inténtalo más tarde o restablece tu contraseña.';
+                                break;
+                            case 'auth/user-disabled':
+                                errorMsg = 'Esta cuenta ha sido deshabilitada. Contacta con soporte.';
+                                break;
+                            case 'auth/invalid-email':
+                                errorMsg = 'El formato del correo electrónico no es válido.';
+                                break;
+                            case 'auth/invalid-credential':
+                                errorMsg = 'Credenciales incorrectas. Revisa tu correo y contraseña.';
+                                break;
+                            default:
+                                errorMsg = 'Error al iniciar sesión: ' + error.message;
+                        }
+                        
+                        showError(errorMessage, errorMsg);
+                    })
+                    .finally(() => {
+                        // Ocultar indicador de carga
+                        toggleLoading(loginButton, loginSpinner, false);
+                    });
+            });
+            
+            // Mostrar/ocultar contraseña
+            togglePasswordBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // Evitar comportamiento predeterminado del botón
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Cambiar el icono
+                const icon = this.querySelector('i');
+                if (type === 'password') {
+                    icon.classList.remove('bi-eye-slash');
+                    icon.classList.add('bi-eye');
+                } else {
+                    icon.classList.remove('bi-eye');
+                    icon.classList.add('bi-eye-slash');
+                }
+            });
+            
+            // Abrir modal de recuperación de contraseña
+            resetPasswordLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Asegurarse de que el modal esté inicializado
+                if (!resetPasswordModal) {
+                    try {
+                        resetPasswordModal = new bootstrap.Modal(document.getElementById('resetPasswordModal'));
+                    } catch (error) {
+                        console.error('Error al inicializar el modal:', error);
+                        alert('Error al abrir el formulario de recuperación. Por favor, recarga la página.');
+                        return;
                     }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    errorMessage.textContent = error.message;
-                    errorMessage.classList.remove('d-none');
-                });
+                }
+                
+                // Pre-llenar el campo de email si ya se escribió uno en el formulario principal
+                resetEmailInput.value = emailInput.value;
+                
+                // Limpiar mensajes anteriores
+                resetErrorMessage.classList.add('d-none');
+                resetSuccessMessage.classList.add('d-none');
+                
+                resetPasswordModal.show();
+            });
+            
+            // Proceso de recuperación de contraseña
+            sendResetEmailBtn.addEventListener('click', function() {
+                const email = resetEmailInput.value;
+                
+                // Validar email
+                if (!email || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+                    resetEmailInput.classList.add('is-invalid');
+                    showError(resetErrorMessage, 'Por favor, introduce un correo electrónico válido.');
+                    return;
+                }
+                
+                // Mostrar indicador de carga
+                toggleLoading(sendResetEmailBtn, resetSpinner, true);
+                
+                // Enviar correo de recuperación
+                firebase.auth().sendPasswordResetEmail(email)
+                    .then(() => {
+                        resetEmailInput.classList.remove('is-invalid');
+                        resetEmailInput.classList.add('is-valid');
+                        
+                        // Mostrar mensaje de éxito
+                        showSuccess(resetSuccessMessage, `Se ha enviado un correo de recuperación a ${email}. Revisa tu bandeja de entrada.`);
+                        
+                        // Cerrar el modal después de unos segundos
+                        setTimeout(() => {
+                            resetPasswordModal.hide();
+                        }, 3000);
+                    })
+                    .catch((error) => {
+                        console.error('Error al solicitar recuperación:', error.code, error.message);
+                        
+                        let errorMsg = '';
+                        switch(error.code) {
+                            case 'auth/user-not-found':
+                                errorMsg = 'No existe una cuenta con este correo electrónico.';
+                                break;
+                            case 'auth/invalid-email':
+                                errorMsg = 'El formato del correo electrónico no es válido.';
+                                break;
+                            case 'auth/too-many-requests':
+                                errorMsg = 'Demasiadas solicitudes. Inténtalo más tarde.';
+                                break;
+                            default:
+                                errorMsg = 'Error al solicitar recuperación de contraseña.';
+                        }
+                        
+                        showError(resetErrorMessage, errorMsg);
+                    })
+                    .finally(() => {
+                        // Ocultar indicador de carga
+                        toggleLoading(sendResetEmailBtn, resetSpinner, false);
+                    });
+            });
+            
+            // Evento para presionar Enter en el modal de recuperación
+            resetEmailInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    sendResetEmailBtn.click();
+                }
+            });
+            
+            // Limpiar clases de validación al cambiar inputs
+            emailInput.addEventListener('input', function() {
+                this.classList.remove('is-invalid', 'is-valid');
+            });
+            
+            passwordInput.addEventListener('input', function() {
+                this.classList.remove('is-invalid', 'is-valid');
+            });
+            
+            resetEmailInput.addEventListener('input', function() {
+                this.classList.remove('is-invalid', 'is-valid');
+                resetErrorMessage.classList.add('d-none');
+            });
         });
     </script>
 </body>
