@@ -176,68 +176,6 @@
     
     <!-- Configuración Firebase -->
     <script src="../firebase-config.js"></script>
-
-    // Este script debe ser agregado a login-con-firebase.html
-// después de cargar firebase-config.js
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Depurador de autenticación inicializado');
-    
-    // Función para depurar problemas de autenticación
-    function debugAuth() {
-        // Comprobar si firebase está disponible
-        if (typeof firebase === 'undefined') {
-            console.error('❌ ERROR: Firebase no está definido');
-            alert('Error crítico: Firebase no se ha cargado correctamente');
-            return;
-        }
-        
-        // Comprobar si la autenticación está disponible
-        if (typeof firebase.auth === 'undefined') {
-            console.error('❌ ERROR: firebase.auth no está definido');
-            alert('Error crítico: El módulo de autenticación de Firebase no se ha cargado');
-            return;
-        }
-        
-        // Verificar estado de autenticación actual
-        const currentUser = firebase.auth().currentUser;
-        console.log('👤 Usuario actual:', currentUser ? {
-            email: currentUser.email,
-            uid: currentUser.uid,
-            emailVerified: currentUser.emailVerified
-        } : 'No hay usuario autenticado');
-        
-        // Verificar token almacenado
-        const storedToken = localStorage.getItem('firebaseAuthToken');
-        console.log('🔑 Token almacenado:', storedToken ? 'Presente' : 'No hay token');
-        
-        // Verificar rutas de redirección
-        console.log('📂 Ruta actual:', window.location.href);
-        console.log('📂 Ruta de dashboard esperada:', new URL('dashboard.html', window.location.href).href);
-        
-        // Comprobar bibliotecas cargadas
-        console.log('📚 Firebase version:', firebase.SDK_VERSION);
-        console.log('📚 jQuery disponible:', typeof jQuery !== 'undefined');
-        console.log('📚 Bootstrap disponible:', typeof bootstrap !== 'undefined');
-        
-        return {
-            success: true,
-            message: 'Análisis de autenticación completado'
-        };
-    }
-    
-    // Agregar función al objeto global para poder llamarla desde la consola
-    window.debugAuth = debugAuth;
-    
-    // Ejecutar inmediatamente
-    debugAuth();
-    
-    // Verificar nuevamente después de cargar completamente la página
-    window.addEventListener('load', function() {
-        console.log('Página completamente cargada, verificando estado final:');
-        debugAuth();
-    });
-});
     
     <!-- Finalmente, nuestro código JavaScript -->
     <script>
