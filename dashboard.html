@@ -180,52 +180,10 @@
     <!-- Configuración Firebase -->
     <script src="../firebase-config.js"></script>
     
+    <!-- Script común para todas las páginas del panel - NUEVO -->
+    <script src="../js/auth-check.js"></script>
+    
     <script>
-        // Referencias a elementos DOM
-        const loadingScreen = document.getElementById('loading-screen');
-        
-        // IMPORTANTE: Verificación estricta de autenticación antes de mostrar el dashboard
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                // No hay usuario autenticado, redirigir al login
-                console.log("No hay usuario autenticado. Redirigiendo al login...");
-                window.location.href = 'login-con-firebase.html';
-                return;
-            }
-            
-            if (!user.emailVerified) {
-                // El email del usuario no está verificado
-                console.log("Email no verificado. Redirigiendo al login...");
-                firebase.auth().signOut().then(() => {
-                    window.location.href = 'login-con-firebase.html?error=email_not_verified';
-                });
-                return;
-            }
-            
-            console.log("Usuario autenticado y verificado:", user.email);
-            
-            // Usuario autenticado y verificado, mostrar dashboard
-            document.getElementById('userDisplayName').textContent = user.email;
-            
-            // Cargar datos del usuario
-            cargarDatosUsuario(user.uid);
-            
-            // Mostrar contenido y ocultar pantalla de carga
-            document.body.style.display = 'block';
-            loadingScreen.style.display = 'none';
-        });
-        
-        // Cerrar sesión
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            firebase.auth().signOut()
-                .then(() => {
-                    window.location.href = '../index.html';
-                })
-                .catch((error) => {
-                    console.error('Error al cerrar sesión:', error);
-                });
-        });
-        
         // Cargar datos del usuario desde Firestore
         function cargarDatosUsuario(userId) {
             firebase.firestore().collection('usuarios').doc(userId).get()
@@ -266,6 +224,11 @@
                     console.error('Error al cargar datos del usuario:', error);
                 });
         }
+
+        // Ejecutar esta función después de que auth-check.js haya verificado la autenticación
+        document.addEventListener('userAuthenticated', function(e) {
+            cargarDatosUsuario(e.detail.userId);
+        });
     </script>
     
     <!-- Bootstrap Icons -->
