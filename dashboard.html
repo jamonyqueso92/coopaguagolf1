@@ -43,6 +43,10 @@
             font-weight: 600;
         }
         
+        .alert-warning {
+            border-left: 4px solid #ffc107;
+        }
+        
         .alert-success {
             border-left: 4px solid #28a745;
         }
@@ -50,6 +54,30 @@
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
+        }
+        
+        .disabled-section {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        .perfil-incompleto {
+            border: 2px solid #ffc107;
+            background-color: #fff3cd;
+        }
+        
+        .form-floating label {
+            font-weight: 500;
+        }
+        
+        .btn-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -67,7 +95,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" href="#" onclick="irAInicio()">
                 <i class="bi bi-droplet-fill me-2"></i>
                 Cooperativa Agua Golf
             </a>
@@ -77,16 +105,24 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#"><i class="bi bi-house-fill me-1"></i>Inicio</a>
+                        <a class="nav-link active" href="#" onclick="mostrarSeccion('dashboard')">
+                            <i class="bi bi-house-fill me-1"></i>Inicio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigateTo('facturas')"><i class="bi bi-receipt me-1"></i>Facturas</a>
+                        <a class="nav-link" href="#" onclick="mostrarSeccion('facturas')" id="navFacturas">
+                            <i class="bi bi-receipt me-1"></i>Facturas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigateTo('reclamos')"><i class="bi bi-exclamation-triangle me-1"></i>Reclamos</a>
+                        <a class="nav-link" href="#" onclick="mostrarSeccion('reclamos')" id="navReclamos">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Reclamos
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="navigateTo('perfil')"><i class="bi bi-person-circle me-1"></i>Mi Perfil</a>
+                        <a class="nav-link" href="#" onclick="mostrarSeccion('perfil')">
+                            <i class="bi bi-person-circle me-1"></i>Mi Perfil
+                        </a>
                     </li>
                 </ul>
                 <div class="d-flex align-items-center">
@@ -102,134 +138,295 @@
         </div>
     </nav>
 
-    <!-- Main content -->
-    <main class="container my-4">
-        <!-- Welcome section -->
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h2 class="text-primary mb-3">Bienvenido a tu Oficina Virtual</h2>
-                <p class="lead text-muted">Accede a todos los servicios de la cooperativa desde aquí. Gestiona tus facturas, consulta tu consumo y mantente al día con tus pagos.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="alert alert-success" id="notificacionVencimiento">
-                    <h6 class="alert-heading"><i class="bi bi-calendar-check me-2"></i>Próximo Vencimiento</h6>
-                    <div id="proximoVencimiento">
-                        <div class="d-flex justify-content-center">
-                            <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
-                            <span>Cargando...</span>
-                        </div>
+    <!-- Sección Dashboard Principal -->
+    <div id="seccionDashboard" class="seccion-contenido">
+        <main class="container my-4">
+            <!-- Alerta de perfil incompleto -->
+            <div class="alert alert-warning perfil-incompleto" id="alertaPerfilIncompleto" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+                    <div class="flex-grow-1">
+                        <h5 class="alert-heading mb-1">¡Completa tu perfil para acceder a todos los servicios!</h5>
+                        <p class="mb-2">Necesitas completar la información de tu suministro para verificar tu identidad y acceder a facturas y reclamos.</p>
+                        <button class="btn btn-warning btn-sm btn-pulse" onclick="mostrarSeccion('perfil')">
+                            <i class="bi bi-pencil-fill me-1"></i>Completar Perfil Ahora
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Action cards -->
-        <div class="row mb-5">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-receipt icon-large text-primary mb-3"></i>
-                        <h4 class="card-title">Facturas</h4>
-                        <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
-                        <button class="btn btn-primary" onclick="navigateTo('facturas')">
-                            <i class="bi bi-eye me-1"></i>Ver Facturas
-                        </button>
+            <!-- Welcome section -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="text-primary mb-3">Bienvenido a tu Oficina Virtual</h2>
+                    <p class="lead text-muted">Accede a todos los servicios de la cooperativa desde aquí. Gestiona tus facturas, consulta tu consumo y mantente al día con tus pagos.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-success" id="notificacionVencimiento">
+                        <h6 class="alert-heading"><i class="bi bi-calendar-check me-2"></i>Próximo Vencimiento</h6>
+                        <div id="proximoVencimiento">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                <span>Cargando...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
-                        <h4 class="card-title">Reclamos</h4>
-                        <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
-                        <button class="btn btn-primary" onclick="navigateTo('reclamos')">
-                            <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center p-4">
-                        <i class="bi bi-person-circle icon-large text-success mb-3"></i>
-                        <h4 class="card-title">Mi Perfil</h4>
-                        <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y preferencias de cuenta.</p>
-                        <button class="btn btn-primary" onclick="navigateTo('perfil')">
-                            <i class="bi bi-pencil me-1"></i>Ver Perfil
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Information panels -->
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-graph-up me-2"></i>Últimos Consumos
-                        </h5>
+            <!-- Action cards -->
+            <div class="row mb-5" id="seccionesAcceso">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" id="cardFacturas">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-receipt icon-large text-primary mb-3"></i>
+                            <h4 class="card-title">Facturas</h4>
+                            <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
+                            <button class="btn btn-primary" onclick="mostrarSeccion('facturas')">
+                                <i class="bi bi-eye me-1"></i>Ver Facturas
+                            </button>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th><i class="bi bi-calendar3 me-1"></i>Período</th>
-                                        <th><i class="bi bi-droplet me-1"></i>Consumo (m³)</th>
-                                        <th><i class="bi bi-cash me-1"></i>Monto</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tablaConsumos">
-                                    <tr>
-                                        <td colspan="3" class="text-center py-4">
-                                            <div class="d-flex justify-content-center align-items-center">
-                                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                                <span>Cargando datos...</span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" id="cardReclamos">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
+                            <h4 class="card-title">Reclamos</h4>
+                            <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
+                            <button class="btn btn-primary" onclick="mostrarSeccion('reclamos')">
+                                <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-person-circle icon-large text-success mb-3"></i>
+                            <h4 class="card-title">Mi Perfil</h4>
+                            <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y datos del suministro.</p>
+                            <button class="btn btn-primary" onclick="mostrarSeccion('perfil')">
+                                <i class="bi bi-pencil me-1"></i>Ver Perfil
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-success text-white">
-                        <h5 class="card-title mb-0">
-                            <i class="bi bi-telephone me-2"></i>Contacto Rápido
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text mb-4">¿Tienes alguna consulta o emergencia? Contáctanos directamente por cualquiera de estos medios:</p>
-                        <div class="d-grid gap-2">
-                            <a href="https://wa.me/5492914254498" class="btn btn-success" target="_blank">
-                                <i class="bi bi-whatsapp me-2"></i>WhatsApp - Consultas Inmediatas
-                            </a>
-                            <a href="tel:+5492914254498" class="btn btn-info">
-                                <i class="bi bi-telephone-fill me-2"></i>Llamar - Emergencias
-                            </a>
-                            <a href="mailto:coopaguagolf@gmail.com" class="btn btn-secondary">
-                                <i class="bi bi-envelope-fill me-2"></i>Email - Consultas Generales
-                            </a>
+
+            <!-- Information panels -->
+            <div class="row">
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-graph-up me-2"></i>Últimos Consumos
+                            </h5>
                         </div>
-                        <div class="mt-3 p-3 bg-light rounded">
-                            <small class="text-muted">
-                                <i class="bi bi-clock me-1"></i>
-                                <strong>Horarios de atención:</strong><br>
-                                Lunes a Viernes: 8:00 - 16:00<br>
-                                Sábados: 9:00 - 13:00
-                            </small>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th><i class="bi bi-calendar3 me-1"></i>Período</th>
+                                            <th><i class="bi bi-droplet me-1"></i>Consumo (m³)</th>
+                                            <th><i class="bi bi-cash me-1"></i>Monto</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tablaConsumos">
+                                        <tr>
+                                            <td colspan="3" class="text-center py-4">
+                                                <div class="d-flex justify-content-center align-items-center">
+                                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                                    <span>Cargando datos...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-telephone me-2"></i>Contacto Rápido
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text mb-4">¿Tienes alguna consulta o emergencia? Contáctanos directamente por cualquiera de estos medios:</p>
+                            <div class="d-grid gap-2">
+                                <a href="https://wa.me/5492914254498" class="btn btn-success" target="_blank">
+                                    <i class="bi bi-whatsapp me-2"></i>WhatsApp - Consultas Inmediatas
+                                </a>
+                                <a href="tel:+5492914254498" class="btn btn-info">
+                                    <i class="bi bi-telephone-fill me-2"></i>Llamar - Emergencias
+                                </a>
+                                <a href="mailto:coopaguagolf@gmail.com" class="btn btn-secondary">
+                                    <i class="bi bi-envelope-fill me-2"></i>Email - Consultas Generales
+                                </a>
+                            </div>
+                            <div class="mt-3 p-3 bg-light rounded">
+                                <small class="text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    <strong>Horarios de atención:</strong><br>
+                                    Lunes a Viernes: 8:00 - 16:00<br>
+                                    Sábados: 9:00 - 13:00
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sección Mi Perfil -->
+    <div id="seccionPerfil" class="seccion-contenido" style="display: none;">
+        <div class="container my-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="bi bi-person-circle me-2"></i>Mi Perfil
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Alerta de perfil incompleto -->
+                            <div class="alert alert-info" id="infoCompletarPerfil">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Importante:</strong> Completa todos los datos del suministro para verificar tu identidad y acceder a facturas y reclamos.
+                            </div>
+
+                            <form id="formPerfil">
+                                <h5 class="text-primary mb-3"><i class="bi bi-person me-2"></i>Datos Personales</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="nombre" placeholder="Nombre completo" required>
+                                            <label for="nombre">Nombre Completo</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="email" placeholder="Email" readonly>
+                                            <label for="email">Email</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="tel" class="form-control" id="telefono" placeholder="Teléfono">
+                                            <label for="telefono">Teléfono</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="dni" placeholder="DNI" required>
+                                            <label for="dni">DNI</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <h5 class="text-success mb-3"><i class="bi bi-house me-2"></i>Datos del Suministro</h5>
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-shield-check me-2"></i>
+                                    <strong>Verificación de Identidad:</strong> Estos datos deben coincidir exactamente con los registros de la cooperativa.
+                                </div>
+
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="numeroSuministro" placeholder="Número de Suministro" required>
+                                            <label for="numeroSuministro">Número de Suministro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="numeroMedidor" placeholder="Número de Medidor" required>
+                                            <label for="numeroMedidor">Número de Medidor</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="direccionSuministro" placeholder="Dirección del Suministro" required>
+                                        <label for="direccionSuministro">Dirección del Suministro</label>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="titularSuministro" placeholder="Titular del Suministro" required>
+                                            <label for="titularSuministro">Titular del Suministro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="categoriaServicio" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="residencial">Residencial</option>
+                                                <option value="comercial">Comercial</option>
+                                                <option value="industrial">Industrial</option>
+                                            </select>
+                                            <label for="categoriaServicio">Categoría del Servicio</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success" id="btnGuardarPerfil">
+                                        <i class="bi bi-check-circle me-1"></i>Guardar Perfil
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="mostrarSeccion('dashboard')">
+                                        <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+
+    <!-- Sección Facturas -->
+    <div id="seccionFacturas" class="seccion-contenido" style="display: none;">
+        <div class="container my-4">
+            <h2 class="text-primary mb-4">
+                <i class="bi bi-receipt me-2"></i>Facturas y Pagos
+            </h2>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Esta sección se habilitará una vez que completes y verifiques tu perfil.
+            </div>
+            <button class="btn btn-primary" onclick="mostrarSeccion('dashboard')">
+                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+            </button>
+        </div>
+    </div>
+
+    <!-- Sección Reclamos -->
+    <div id="seccionReclamos" class="seccion-contenido" style="display: none;">
+        <div class="container my-4">
+            <h2 class="text-primary mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>Reclamos y Consultas
+            </h2>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Esta sección se habilitará una vez que completes y verifiques tu perfil.
+            </div>
+            <button class="btn btn-primary" onclick="mostrarSeccion('dashboard')">
+                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+            </button>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="bg-light text-center py-4 mt-5">
@@ -259,36 +456,18 @@
             measurementId: "G-V6Z34N9V06"
         };
 
-        // Inicializar Firebase solo si aún no se ha inicializado
+        // Inicializar Firebase
         if (!firebase.apps || !firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
-        } else {
-            firebase.app(); // Si ya está inicializado, use la instancia actual
         }
 
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Objeto de utilidad para depuración
-        const FirebaseDebug = {
-            checkAuth: function() {
-                const user = firebase.auth().currentUser;
-                console.log('Usuario actual:', user ? user.email : 'No hay usuario autenticado');
-                return user;
-            },
-            
-            getAuthState: function() {
-                return new Promise((resolve) => {
-                    firebase.auth().onAuthStateChanged((user) => {
-                        console.log('Estado de autenticación:', user ? 'Autenticado' : 'No autenticado');
-                        resolve(user);
-                    });
-                });
-            }
-        };
-
-        // Variables globales
+        // Variables globales del sistema
         let currentUser = null;
+        let userProfile = null;
+        let perfilCompleto = false;
 
         // Verificar autenticación al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
@@ -305,11 +484,10 @@
                     console.log('Usuario autenticado:', user.uid);
                     currentUser = user;
                     mostrarDashboard();
-                    cargarDatosUsuario(user.uid);
+                    cargarPerfilUsuario(user.uid);
                     loadingOverlay.style.display = 'none';
                 } else {
                     console.log('Usuario no autenticado, redirigiendo...');
-                    // Simular redireccionamiento (en producción usar window.location.href)
                     mostrarMensajeNoAutenticado();
                     loadingOverlay.style.display = 'none';
                 }
@@ -323,6 +501,9 @@
             // Mostrar nombre del usuario
             const displayName = currentUser.displayName || currentUser.email || 'Usuario';
             document.getElementById('userDisplayName').textContent = displayName;
+            
+            // Mostrar sección dashboard por defecto
+            mostrarSeccion('dashboard');
         }
 
         // Mostrar mensaje para usuario no autenticado
@@ -334,8 +515,8 @@
                             <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
                             <h3>Acceso Restringido</h3>
                             <p class="mb-3">Necesitas iniciar sesión para acceder al dashboard.</p>
-                            <a href="login-con-firebase.html" class="btn btn-primary">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                            <a href="index.html" class="btn btn-primary">
+                                <i class="bi bi-arrow-left me-1"></i>Volver al Inicio
                             </a>
                         </div>
                     </div>
@@ -343,170 +524,133 @@
             `;
         }
 
-        // Cargar datos del usuario desde Firestore
-        function cargarDatosUsuario(userId) {
-            console.log('Cargando datos del usuario:', userId);
+        // Cargar perfil del usuario
+        function cargarPerfilUsuario(userId) {
+            console.log('Cargando perfil del usuario:', userId);
             
-            // Intentar cargar datos reales de Firestore
             db.collection('usuarios').doc(userId).get()
                 .then((doc) => {
                     if (doc.exists) {
-                        console.log('Datos del usuario encontrados:', doc.data());
-                        const userData = doc.data();
-                        mostrarProximoVencimiento(userData.proximoVencimiento);
-                        mostrarConsumos(userData.consumos);
+                        userProfile = doc.data();
+                        console.log('Perfil encontrado:', userProfile);
+                        verificarCompletitudPerfil();
+                        cargarDatosEnFormulario();
+                        if (perfilCompleto) {
+                            cargarDatosFacturacion();
+                        }
                     } else {
-                        console.log('No se encontró documento del usuario, usando datos de demostración');
-                        cargarDatosDemostracion();
+                        console.log('No se encontró perfil del usuario');
+                        crearPerfilInicial(userId);
                     }
                 })
                 .catch((error) => {
-                    console.error('Error al cargar datos desde Firestore:', error);
-                    console.log('Usando datos de demostración como respaldo');
-                    cargarDatosDemostracion();
+                    console.error('Error al cargar perfil:', error);
+                    mostrarError('Error al cargar datos del perfil');
                 });
         }
 
-        // Cargar datos de demostración
-        function cargarDatosDemostracion() {
-            // Datos de demostración para próximo vencimiento
-            const proximoVencimiento = {
-                numero: 'FAC-2025-001',
-                fecha: '15/01/2025',
-                monto: '15,750'
+        // Crear perfil inicial
+        function crearPerfilInicial(userId) {
+            const perfilInicial = {
+                email: currentUser.email,
+                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
+                perfilCompleto: false
             };
-            mostrarProximoVencimiento(proximoVencimiento);
 
-            // Datos de demostración para consumos
-            const consumos = [
-                { periodo: 'Dic 2024', valor: 18, monto: '15,750' },
-                { periodo: 'Nov 2024', valor: 16, monto: '14,200' },
-                { periodo: 'Oct 2024', valor: 20, monto: '17,100' }
+            db.collection('usuarios').doc(userId).set(perfilInicial)
+                .then(() => {
+                    console.log('Perfil inicial creado');
+                    userProfile = perfilInicial;
+                    verificarCompletitudPerfil();
+                })
+                .catch((error) => {
+                    console.error('Error al crear perfil inicial:', error);
+                });
+        }
+
+        // Verificar si el perfil está completo
+        function verificarCompletitudPerfil() {
+            if (!userProfile) {
+                perfilCompleto = false;
+                return;
+            }
+
+            // Campos requeridos para considerar el perfil completo
+            const camposRequeridos = [
+                'nombre', 'dni', 'numeroSuministro', 'numeroMedidor', 
+                'direccionSuministro', 'titularSuministro', 'categoriaServicio'
             ];
-            mostrarConsumos(consumos);
+
+            perfilCompleto = camposRequeridos.every(campo => 
+                userProfile[campo] && userProfile[campo].trim() !== ''
+            );
+
+            console.log('Perfil completo:', perfilCompleto);
+            actualizarInterfazSegunPerfil();
         }
 
-        // Mostrar próximo vencimiento
-        function mostrarProximoVencimiento(vencimiento) {
-            const container = document.getElementById('proximoVencimiento');
-            
-            if (vencimiento) {
-                container.innerHTML = `
-                    <div>
-                        <p class="mb-1"><strong>Factura:</strong> ${vencimiento.numero}</p>
-                        <p class="mb-1"><strong>Vencimiento:</strong> ${vencimiento.fecha}</p>
-                        <p class="mb-2"><strong>Monto:</strong> $${vencimiento.monto}</p>
-                        <button class="btn btn-sm btn-success" onclick="navigateTo('facturas')">
-                            <i class="bi bi-credit-card me-1"></i>Pagar Ahora
-                        </button>
-                    </div>
-                `;
+        // Actualizar interfaz según estado del perfil
+        function actualizarInterfazSegunPerfil() {
+            const alertaPerfil = document.getElementById('alertaPerfilIncompleto');
+            const cardFacturas = document.getElementById('cardFacturas');
+            const cardReclamos = document.getElementById('cardReclamos');
+            const navFacturas = document.getElementById('navFacturas');
+            const navReclamos = document.getElementById('navReclamos');
+
+            if (!perfilCompleto) {
+                // Mostrar alerta de perfil incompleto
+                alertaPerfil.style.display = 'block';
+                
+                // Deshabilitar secciones de facturas y reclamos
+                cardFacturas.classList.add('disabled-section');
+                cardReclamos.classList.add('disabled-section');
+                navFacturas.classList.add('disabled');
+                navReclamos.classList.add('disabled');
+                
+                // Agregar tooltips
+                cardFacturas.title = 'Completa tu perfil para acceder a las facturas';
+                cardReclamos.title = 'Completa tu perfil para acceder a los reclamos';
             } else {
-                container.innerHTML = `
-                    <div class="text-success">
-                        <i class="bi bi-check-circle me-2"></i>
-                        <span>No hay facturas pendientes</span>
-                    </div>
-                `;
+                // Ocultar alerta y habilitar todo
+                alertaPerfil.style.display = 'none';
+                cardFacturas.classList.remove('disabled-section');
+                cardReclamos.classList.remove('disabled-section');
+                navFacturas.classList.remove('disabled');
+                navReclamos.classList.remove('disabled');
             }
         }
 
-        // Mostrar consumos
-        function mostrarConsumos(consumos) {
-            const tbody = document.getElementById('tablaConsumos');
+        // Cargar datos en el formulario de perfil
+        function cargarDatosEnFormulario() {
+            if (!userProfile) return;
+
+            document.getElementById('email').value = currentUser.email;
             
-            if (consumos && consumos.length > 0) {
-                tbody.innerHTML = '';
-                consumos.forEach(consumo => {
-                    tbody.innerHTML += `
-                        <tr>
-                            <td>${consumo.periodo}</td>
-                            <td><strong>${consumo.valor}</strong> m³</td>
-                            <td class="text-success">$${consumo.monto}</td>
-                        </tr>
-                    `;
-                });
-            } else {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="3" class="text-center text-muted py-4">
-                            <i class="bi bi-inbox me-2"></i>
-                            No hay datos de consumo disponibles
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        // Navegación entre secciones
-        function navigateTo(section) {
-            // En una aplicación real, esto navegaría a diferentes páginas
-            // Por ahora, mostramos una alerta informativa
-            const sectionNames = {
-                'facturas': 'Facturas y Pagos',
-                'reclamos': 'Reclamos y Consultas',
-                'perfil': 'Mi Perfil'
-            };
+            const campos = ['nombre', 'telefono', 'dni', 'numeroSuministro', 
+                           'numeroMedidor', 'direccionSuministro', 'titularSuministro', 'categoriaServicio'];
             
-            alert(`Navegando a: ${sectionNames[section]}\n\nEn una aplicación completa, esto te llevaría a la sección correspondiente.`);
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento && userProfile[campo]) {
+                    elemento.value = userProfile[campo];
+                }
+            });
         }
 
-        // Cerrar sesión
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                auth.signOut().then(() => {
-                    console.log('Sesión cerrada exitosamente');
-                    // En producción: window.location.href = 'index.html';
-                    location.reload();
-                }).catch((error) => {
-                    console.error('Error al cerrar sesión:', error);
-                });
-            }
+        // Manejar envío del formulario de perfil
+        document.getElementById('formPerfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarPerfil();
         });
 
-        // Manejo de errores globales
-        window.addEventListener('error', function(e) {
-            console.error('Error global:', e.error);
-        });
+        // Guardar perfil
+        function guardarPerfil() {
+            const btnGuardar = document.getElementById('btnGuardarPerfil');
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Guardando...';
 
-        // Funciones de utilidad
-        function mostrarError(mensaje) {
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.zIndex = '9999';
-            alert.innerHTML = `
-                ${mensaje}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.parentNode.removeChild(alert);
-                }
-            }, 5000);
-        }
-
-        function mostrarExito(mensaje) {
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
-            alert.style.top = '20px';
-            alert.style.right = '20px';
-            alert.style.zIndex = '9999';
-            alert.innerHTML = `
-                ${mensaje}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            `;
-            document.body.appendChild(alert);
-            
-            setTimeout(() => {
-                if (alert.parentNode) {
-                    alert.parentNode.removeChild(alert);
-                }
-            }, 3000);
-        }
-    </script>
-</body>
-</html>
+            const datosFormulario = {
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                dni: document.getElementById('dni').value,
+                numeroSuministro:
