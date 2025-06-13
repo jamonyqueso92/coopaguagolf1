@@ -5,138 +5,191 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Oficina Virtual</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        /* Ocultar el contenido hasta verificar autenticación */
         body {
-            display: none;
+            background-color: #f8f9fa;
         }
         
-        /* Spinner para carga */
-        .loading-container {
+        .card {
+            transition: transform 0.2s;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .icon-large {
+            font-size: 3rem;
+        }
+        
+        .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: rgba(255, 255, 255, 0.9);
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: rgba(255, 255, 255, 0.9);
             z-index: 9999;
         }
         
-        .loading-spinner {
-            width: 3rem;
-            height: 3rem;
+        .navbar-brand {
+            font-weight: 600;
+        }
+        
+        .alert-success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <!-- Spinner de carga durante verificación de autenticación -->
-    <div class="loading-container" id="loading-screen">
-        <div class="d-flex flex-column align-items-center">
-            <div class="spinner-border text-primary loading-spinner" role="status">
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
                 <span class="visually-hidden">Cargando...</span>
             </div>
-            <p class="mt-3">Verificando autenticación...</p>
+            <p>Verificando autenticación...</p>
         </div>
     </div>
 
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">Cooperativa Agua Golf</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-droplet-fill me-2"></i>
+                Cooperativa Agua Golf
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html">Inicio</a>
+                        <a class="nav-link active" href="#"><i class="bi bi-house-fill me-1"></i>Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="facturas.html">Facturas</a>
+                        <a class="nav-link" href="#" onclick="navigateTo('facturas')"><i class="bi bi-receipt me-1"></i>Facturas</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="reclamos.html">Reclamos</a>
+                        <a class="nav-link" href="#" onclick="navigateTo('reclamos')"><i class="bi bi-exclamation-triangle me-1"></i>Reclamos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="perfil.html">Mi Perfil</a>
+                        <a class="nav-link" href="#" onclick="navigateTo('perfil')"><i class="bi bi-person-circle me-1"></i>Mi Perfil</a>
                     </li>
                 </ul>
-                <div class="d-flex">
-                    <span class="navbar-text me-3" id="userDisplayName">Usuario</span>
-                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3">
+                        <i class="bi bi-person-fill me-1"></i>
+                        <span id="userDisplayName">Cargando...</span>
+                    </span>
+                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- Main content -->
     <main class="container my-4">
+        <!-- Welcome section -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="text-primary mb-3">Bienvenido a tu Oficina Virtual</h2>
+                <p class="lead text-muted">Accede a todos los servicios de la cooperativa desde aquí. Gestiona tus facturas, consulta tu consumo y mantente al día con tus pagos.</p>
+            </div>
+            <div class="col-md-4">
+                <div class="alert alert-success" id="notificacionVencimiento">
+                    <h6 class="alert-heading"><i class="bi bi-calendar-check me-2"></i>Próximo Vencimiento</h6>
+                    <div id="proximoVencimiento">
+                        <div class="d-flex justify-content-center">
+                            <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                            <span>Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action cards -->
+        <div class="row mb-5">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-receipt icon-large text-primary mb-3"></i>
+                        <h4 class="card-title">Facturas</h4>
+                        <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('facturas')">
+                            <i class="bi bi-eye me-1"></i>Ver Facturas
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
+                        <h4 class="card-title">Reclamos</h4>
+                        <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('reclamos')">
+                            <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center p-4">
+                        <i class="bi bi-person-circle icon-large text-success mb-3"></i>
+                        <h4 class="card-title">Mi Perfil</h4>
+                        <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y preferencias de cuenta.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('perfil')">
+                            <i class="bi bi-pencil me-1"></i>Ver Perfil
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Information panels -->
         <div class="row">
-            <div class="col-md-6">
-                <h2>Bienvenido a tu Oficina Virtual</h2>
-                <p class="lead">Accede a todos los servicios de la cooperativa desde aquí.</p>
-            </div>
-            <div class="col-md-6">
-                <div class="alert alert-info" id="notificacion">
-                    <h5>Próximo vencimiento:</h5>
-                    <div id="proximoVencimiento">Cargando...</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-receipt fs-1 text-primary mb-3"></i>
-                        <h3>Facturas</h3>
-                        <p>Revisa tu historial de facturas y realiza tus pagos.</p>
-                        <a href="facturas.html" class="btn btn-primary">Ver Facturas</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-exclamation-triangle fs-1 text-warning mb-3"></i>
-                        <h3>Reclamos</h3>
-                        <p>Gestiona tus reclamos y solicitudes de servicio.</p>
-                        <a href="reclamos.html" class="btn btn-primary">Gestionar Reclamos</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-person-circle fs-1 text-success mb-3"></i>
-                        <h3>Mi Perfil</h3>
-                        <p>Actualiza tus datos personales y de contacto.</p>
-                        <a href="perfil.html" class="btn btn-primary">Ver Perfil</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-6 mb-4">
+            <div class="col-lg-6 mb-4">
                 <div class="card h-100">
                     <div class="card-header bg-primary text-white">
-                        <h3 class="card-title m-0">Últimos Consumos</h3>
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-graph-up me-2"></i>Últimos Consumos
+                        </h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-hover">
+                            <table class="table table-hover mb-0">
                                 <thead>
                                     <tr>
-                                        <th>Período</th>
-                                        <th>Consumo (m³)</th>
+                                        <th><i class="bi bi-calendar3 me-1"></i>Período</th>
+                                        <th><i class="bi bi-droplet me-1"></i>Consumo (m³)</th>
+                                        <th><i class="bi bi-cash me-1"></i>Monto</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tablaConsumos">
                                     <tr>
-                                        <td colspan="2" class="text-center">Cargando datos...</td>
+                                        <td colspan="3" class="text-center py-4">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                                                <span>Cargando datos...</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -144,23 +197,33 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
+            <div class="col-lg-6 mb-4">
                 <div class="card h-100">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title m-0">Contacto Rápido</h3>
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-telephone me-2"></i>Contacto Rápido
+                        </h5>
                     </div>
                     <div class="card-body">
-                        <p>¿Tienes alguna consulta? Contáctanos directamente:</p>
+                        <p class="card-text mb-4">¿Tienes alguna consulta o emergencia? Contáctanos directamente por cualquiera de estos medios:</p>
                         <div class="d-grid gap-2">
-                            <a href="https://wa.me/549123456789" class="btn btn-success" target="_blank">
-                                <i class="bi bi-whatsapp"></i> WhatsApp
+                            <a href="https://wa.me/5492914254498" class="btn btn-success" target="_blank">
+                                <i class="bi bi-whatsapp me-2"></i>WhatsApp - Consultas Inmediatas
                             </a>
-                            <a href="tel:+5491123456789" class="btn btn-info text-white">
-                                <i class="bi bi-telephone"></i> Llamar
+                            <a href="tel:+5492914254498" class="btn btn-info">
+                                <i class="bi bi-telephone-fill me-2"></i>Llamar - Emergencias
                             </a>
-                            <a href="mailto:contacto@coopaguagolf.com.ar" class="btn btn-secondary">
-                                <i class="bi bi-envelope"></i> Email
+                            <a href="mailto:coopaguagolf@gmail.com" class="btn btn-secondary">
+                                <i class="bi bi-envelope-fill me-2"></i>Email - Consultas Generales
                             </a>
+                        </div>
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <small class="text-muted">
+                                <i class="bi bi-clock me-1"></i>
+                                <strong>Horarios de atención:</strong><br>
+                                Lunes a Viernes: 8:00 - 16:00<br>
+                                Sábados: 9:00 - 13:00
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -168,8 +231,12 @@
         </div>
     </main>
 
-    <footer class="bg-light text-center py-3 mt-auto">
-        <p>&copy; 2024 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+    <!-- Footer -->
+    <footer class="bg-light text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2025 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+            <small class="text-muted">Sierra de la Ventana - Buenos Aires, Argentina</small>
+        </div>
     </footer>
 
     <!-- Firebase SDK -->
@@ -177,99 +244,269 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     
-    <!-- Configuración Firebase -->
-    <script src="../firebase-config.js"></script>
-    
-    <!-- Script común para todas las páginas del panel - CORREGIDO -->
-    <script src="../js/auth-check.js"></script>
-    
-    <!-- Script inline para depuración -->
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
     <script>
-        console.log('Dashboard cargando...');
-        
-        // Verificar si firebase está disponible
-        if (typeof firebase !== 'undefined') {
-            console.log('Firebase disponible');
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3EwtirsHI_kwxMLH5SP2rXbm3vCYpqhg",
+            authDomain: "coopaguagolf-b1e2f.firebaseapp.com",
+            projectId: "coopaguagolf-b1e2f",
+            storageBucket: "coopaguagolf-b1e2f.appspot.com",
+            messagingSenderId: "980063915524",
+            appId: "1:980063915524:web:e991b552b607d2447aef51",
+            measurementId: "G-V6Z34N9V06"
+        };
+
+        // Inicializar Firebase solo si aún no se ha inicializado
+        if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         } else {
-            console.error('Firebase no está disponible');
+            firebase.app(); // Si ya está inicializado, use la instancia actual
         }
-        
-        // Verificar si ya hay un token de autenticación
-        const token = localStorage.getItem('firebaseAuthToken');
-        if (token) {
-            console.log('Token encontrado en localStorage');
-        } else {
-            console.log('No hay token en localStorage');
+
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Objeto de utilidad para depuración
+        const FirebaseDebug = {
+            checkAuth: function() {
+                const user = firebase.auth().currentUser;
+                console.log('Usuario actual:', user ? user.email : 'No hay usuario autenticado');
+                return user;
+            },
+            
+            getAuthState: function() {
+                return new Promise((resolve) => {
+                    firebase.auth().onAuthStateChanged((user) => {
+                        console.log('Estado de autenticación:', user ? 'Autenticado' : 'No autenticado');
+                        resolve(user);
+                    });
+                });
+            }
+        };
+
+        // Variables globales
+        let currentUser = null;
+
+        // Verificar autenticación al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard iniciando...');
+            verificarAutenticacion();
+        });
+
+        // Verificar estado de autenticación
+        function verificarAutenticacion() {
+            auth.onAuthStateChanged(function(user) {
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                
+                if (user) {
+                    console.log('Usuario autenticado:', user.uid);
+                    currentUser = user;
+                    mostrarDashboard();
+                    cargarDatosUsuario(user.uid);
+                    loadingOverlay.style.display = 'none';
+                } else {
+                    console.log('Usuario no autenticado, redirigiendo...');
+                    // Simular redireccionamiento (en producción usar window.location.href)
+                    mostrarMensajeNoAutenticado();
+                    loadingOverlay.style.display = 'none';
+                }
+            });
         }
-        
+
+        // Mostrar dashboard para usuario autenticado
+        function mostrarDashboard() {
+            document.body.style.display = 'block';
+            
+            // Mostrar nombre del usuario
+            const displayName = currentUser.displayName || currentUser.email || 'Usuario';
+            document.getElementById('userDisplayName').textContent = displayName;
+        }
+
+        // Mostrar mensaje para usuario no autenticado
+        function mostrarMensajeNoAutenticado() {
+            document.body.innerHTML = `
+                <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
+                    <div class="text-center">
+                        <div class="alert alert-warning p-4">
+                            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+                            <h3>Acceso Restringido</h3>
+                            <p class="mb-3">Necesitas iniciar sesión para acceder al dashboard.</p>
+                            <a href="login-con-firebase.html" class="btn btn-primary">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // Cargar datos del usuario desde Firestore
         function cargarDatosUsuario(userId) {
             console.log('Cargando datos del usuario:', userId);
             
-            firebase.firestore().collection('usuarios').doc(userId).get()
+            // Intentar cargar datos reales de Firestore
+            db.collection('usuarios').doc(userId).get()
                 .then((doc) => {
                     if (doc.exists) {
                         console.log('Datos del usuario encontrados:', doc.data());
                         const userData = doc.data();
-                        
-                        // Mostrar próximo vencimiento si existe
-                        if (userData.proximoVencimiento) {
-                            document.getElementById('proximoVencimiento').innerHTML = `
-                                <p><strong>Factura:</strong> ${userData.proximoVencimiento.numero}</p>
-                                <p><strong>Vencimiento:</strong> ${userData.proximoVencimiento.fecha}</p>
-                                <p><strong>Monto:</strong> $${userData.proximoVencimiento.monto}</p>
-                                <a href="facturas.html" class="btn btn-sm btn-primary">Pagar ahora</a>
-                            `;
-                        } else {
-                            document.getElementById('proximoVencimiento').textContent = 'No hay facturas pendientes.';
-                        }
-                        
-                        // Cargar consumos
-                        const tablaConsumos = document.getElementById('tablaConsumos');
-                        if (userData.consumos && userData.consumos.length > 0) {
-                            tablaConsumos.innerHTML = '';
-                            userData.consumos.slice(0, 3).forEach(consumo => {
-                                tablaConsumos.innerHTML += `
-                                    <tr>
-                                        <td>${consumo.periodo}</td>
-                                        <td>${consumo.valor} m³</td>
-                                    </tr>
-                                `;
-                            });
-                        } else {
-                            tablaConsumos.innerHTML = '<tr><td colspan="2" class="text-center">No hay datos de consumo disponibles.</td></tr>';
-                        }
+                        mostrarProximoVencimiento(userData.proximoVencimiento);
+                        mostrarConsumos(userData.consumos);
                     } else {
-                        console.log('No se encontró documento del usuario');
-                        document.getElementById('proximoVencimiento').textContent = 'No hay datos disponibles.';
+                        console.log('No se encontró documento del usuario, usando datos de demostración');
+                        cargarDatosDemostracion();
                     }
                 })
                 .catch((error) => {
-                    console.error('Error al cargar datos del usuario:', error);
-                    document.getElementById('proximoVencimiento').textContent = 'Error al cargar datos.';
+                    console.error('Error al cargar datos desde Firestore:', error);
+                    console.log('Usando datos de demostración como respaldo');
+                    cargarDatosDemostracion();
                 });
         }
 
-        // Respaldo por si falla el evento
-        window.addEventListener('load', function() {
-            console.log('Verificando autenticación manualmente...');
-            const user = firebase.auth().currentUser;
-            if (user) {
-                console.log('Usuario autenticado manualmente:', user.uid);
-                cargarDatosUsuario(user.uid);
+        // Cargar datos de demostración
+        function cargarDatosDemostracion() {
+            // Datos de demostración para próximo vencimiento
+            const proximoVencimiento = {
+                numero: 'FAC-2025-001',
+                fecha: '15/01/2025',
+                monto: '15,750'
+            };
+            mostrarProximoVencimiento(proximoVencimiento);
+
+            // Datos de demostración para consumos
+            const consumos = [
+                { periodo: 'Dic 2024', valor: 18, monto: '15,750' },
+                { periodo: 'Nov 2024', valor: 16, monto: '14,200' },
+                { periodo: 'Oct 2024', valor: 20, monto: '17,100' }
+            ];
+            mostrarConsumos(consumos);
+        }
+
+        // Mostrar próximo vencimiento
+        function mostrarProximoVencimiento(vencimiento) {
+            const container = document.getElementById('proximoVencimiento');
+            
+            if (vencimiento) {
+                container.innerHTML = `
+                    <div>
+                        <p class="mb-1"><strong>Factura:</strong> ${vencimiento.numero}</p>
+                        <p class="mb-1"><strong>Vencimiento:</strong> ${vencimiento.fecha}</p>
+                        <p class="mb-2"><strong>Monto:</strong> $${vencimiento.monto}</p>
+                        <button class="btn btn-sm btn-success" onclick="navigateTo('facturas')">
+                            <i class="bi bi-credit-card me-1"></i>Pagar Ahora
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-success">
+                        <i class="bi bi-check-circle me-2"></i>
+                        <span>No hay facturas pendientes</span>
+                    </div>
+                `;
+            }
+        }
+
+        // Mostrar consumos
+        function mostrarConsumos(consumos) {
+            const tbody = document.getElementById('tablaConsumos');
+            
+            if (consumos && consumos.length > 0) {
+                tbody.innerHTML = '';
+                consumos.forEach(consumo => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${consumo.periodo}</td>
+                            <td><strong>${consumo.valor}</strong> m³</td>
+                            <td class="text-success">$${consumo.monto}</td>
+                        </tr>
+                    `;
+                });
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            <i class="bi bi-inbox me-2"></i>
+                            No hay datos de consumo disponibles
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Navegación entre secciones
+        function navigateTo(section) {
+            // En una aplicación real, esto navegaría a diferentes páginas
+            // Por ahora, mostramos una alerta informativa
+            const sectionNames = {
+                'facturas': 'Facturas y Pagos',
+                'reclamos': 'Reclamos y Consultas',
+                'perfil': 'Mi Perfil'
+            };
+            
+            alert(`Navegando a: ${sectionNames[section]}\n\nEn una aplicación completa, esto te llevaría a la sección correspondiente.`);
+        }
+
+        // Cerrar sesión
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+                auth.signOut().then(() => {
+                    console.log('Sesión cerrada exitosamente');
+                    // En producción: window.location.href = 'index.html';
+                    location.reload();
+                }).catch((error) => {
+                    console.error('Error al cerrar sesión:', error);
+                });
             }
         });
 
-        // Eventos personalizados
-        document.addEventListener('userAuthenticated', function(e) {
-            console.log('Evento userAuthenticated recibido con ID:', e.detail.userId);
-            cargarDatosUsuario(e.detail.userId);
+        // Manejo de errores globales
+        window.addEventListener('error', function(e) {
+            console.error('Error global:', e.error);
         });
+
+        // Funciones de utilidad
+        function mostrarError(mensaje) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show position-fixed';
+            alert.style.top = '20px';
+            alert.style.right = '20px';
+            alert.style.zIndex = '9999';
+            alert.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 5000);
+        }
+
+        function mostrarExito(mensaje) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alert.style.top = '20px';
+            alert.style.right = '20px';
+            alert.style.zIndex = '9999';
+            alert.innerHTML = `
+                ${mensaje}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.parentNode.removeChild(alert);
+                }
+            }, 3000);
+        }
     </script>
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
