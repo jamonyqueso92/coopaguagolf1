@@ -5,308 +5,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil de Usuario - Oficina Virtual</title>
-
     <!-- Estilos CSS -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Barra lateral */
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f5f5f5; color: #333; }
+        .container { display: flex; min-height: 100vh; }
         .sidebar {
-            width: 250px;
-            background-color: #fff;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .sidebar-header h2 {
-            font-size: 20px;
-            color: #333;
-        }
-
-        .nav-menu {
-            margin-top: 20px;
-            flex-grow: 1;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: #666;
-        }
-
-        .nav-item:hover {
-            background-color: #f0f5ff;
-        }
-
-        .nav-item.active {
-            background-color: #e6f0ff;
-            color: #1a73e8;
-            border-right: 4px solid #1a73e8;
-        }
-
-        .nav-item i {
-            margin-right: 10px;
-            font-size: 18px;
-        }
-
-        /* Botón de regreso */
-        .back-button {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: #f5f5f5;
-            color: #555;
-            text-decoration: none;
-            font-weight: 500;
-            border-top: 1px solid #e0e0e0;
-            transition: all 0.3s ease;
-        }
-
-        .back-button:hover {
-            background-color: #e6f0ff;
-            color: #1a73e8;
-        }
-
-        .back-button i {
-            margin-right: 10px;
-        }
-
-        /* Contenido principal */
-        .content {
-            flex: 1;
-            padding: 30px;
-        }
-
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .card h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        /* Formularios */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            margin: 0 -10px;
-        }
-
-        .form-col {
-            flex: 1;
-            padding: 0 10px;
-            min-width: 250px;
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 5px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        input[type="password"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .btn-primary {
-            background-color: #1a73e8;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #1557b0;
-        }
-
-        .btn-danger {
-            background-color: white;
-            color: #e53935;
-            border: 1px solid #e53935;
-        }
-
-        .btn-danger:hover {
-            background-color: #ffebee;
-        }
-
-        .text-right {
-            text-align: right;
-        }
-
-        /* Tablas */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th {
-            text-align: left;
-            padding: 12px;
-            background-color: #f5f5f5;
-            color: #666;
-            font-size: 12px;
-            text-transform: uppercase;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 14px;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge-green {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .badge-blue {
-            background-color: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .badge-purple {
-            background-color: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .badge-yellow {
-            background-color: #fff8e1;
-            color: #f9a825;
-        }
-
-        /* Switch para activar/desactivar */
-        .switch {
+            width: 250px; background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column;
+            transition: left 0.3s;
             position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
+            z-index: 2;
         }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+        .sidebar-header { padding: 20px; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: space-between; }
+        .sidebar-header h2 { font-size: 20px; color: #333; }
+        .nav-menu { margin-top: 20px; flex-grow: 1; }
+        .nav-item {
+            display: flex; align-items: center; padding: 12px 20px; cursor: pointer;
+            transition: background 0.2s, color 0.2s; color: #666; border-radius: 0 50px 50px 0;
+            margin-right: 8px;
         }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
+        .nav-item:hover, .nav-item:focus {
+            background-color: #e6f0ff;
+            color: #1a73e8;
+            outline: none;
         }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
+        .nav-item.active {
             background-color: #1a73e8;
+            color: #fff;
+            border-right: 4px solid #1a73e8;
+            box-shadow: 0 2px 8px rgba(26, 115, 232, 0.08);
         }
-
-        input:focus+.slider {
-            box-shadow: 0 0 1px #1a73e8;
+        .nav-item i { margin-right: 10px; font-size: 18px; }
+        .back-button {
+            display: flex; align-items: center; padding: 15px 20px;
+            background-color: #f5f5f5; color: #555; text-decoration: none;
+            font-weight: 500; border-top: 1px solid #e0e0e0;
+            transition: background 0.2s, color 0.2s;
         }
-
-        input:checked+.slider:before {
-            transform: translateX(26px);
+        .back-button:hover { background-color: #e6f0ff; color: #1a73e8; }
+        .back-button i { margin-right: 10px; }
+        .content { flex: 1; padding: 30px; min-width: 0; position: relative; }
+        .section-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; }
+        .card {
+            background-color: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 20px;
         }
-
+        .card h3 { font-size: 18px; margin-bottom: 15px; color: #333; }
+        /* Transición de sección */
+        .section {
+            opacity: 0; pointer-events: none; position: absolute; left: 0; top: 0; width: 100%; transition: opacity 0.3s, transform 0.3s;
+            transform: translateY(20px); z-index: 1; background: transparent;
+        }
+        .section.active {
+            opacity: 1; pointer-events: auto; position: relative; transform: translateY(0); z-index: 2; background: transparent;
+        }
+        /* Formularios */
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: flex; flex-wrap: wrap; margin: 0 -10px; }
+        .form-col { flex: 1; padding: 0 10px; min-width: 250px; margin-bottom: 15px; }
+        label { display: block; font-size: 14px; color: #555; margin-bottom: 5px; }
+        input[type="text"], input[type="email"], input[type="tel"], input[type="password"], input[type="date"], select {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px;
+        }
+        .btn { padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .btn-primary { background-color: #1a73e8; color: white; }
+        .btn-primary:hover { background-color: #1557b0; }
+        .btn-danger { background-color: white; color: #e53935; border: 1px solid #e53935; }
+        .btn-danger:hover { background-color: #ffebee; }
+        .text-right { text-align: right; }
+        /* Tablas */
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 12px; background-color: #f5f5f5; color: #666; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #e0e0e0; }
+        td { padding: 12px; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+        .badge-green { background-color: #e8f5e9; color: #2e7d32; }
+        .badge-blue { background-color: #e3f2fd; color: #1565c0; }
+        .badge-purple { background-color: #f3e5f5; color: #7b1fa2; }
+        .badge-yellow { background-color: #fff8e1; color: #f9a825; }
+        /* Switch para activar/desactivar */
+        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #1a73e8; }
+        input:focus + .slider { box-shadow: 0 0 1px #1a73e8; }
+        input:checked + .slider:before { transform: translateX(26px); }
         /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
+        @media (max-width: 900px) {
+            .container { flex-direction: column; }
+            .sidebar { width: 100%; min-height: 60px; flex-direction: row; box-shadow: none; }
+            .nav-menu { flex-direction: row; display: flex; margin-top: 0; }
+            .nav-item { border-radius: 0; margin-right: 0; flex: 1; justify-content: center; }
+            .sidebar-header { display: none; }
+            .back-button { display: none; }
+            .content { padding: 16px; }
+        }
+        @media (max-width: 600px) {
+            .content { padding: 8px; }
+            th, td { padding: 6px; }
         }
     </style>
-
     <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -319,23 +124,23 @@
                 <h2>Mi Perfil</h2>
             </div>
             <div class="nav-menu">
-                <div class="nav-item active" data-section="personal">
+                <div class="nav-item active" data-section="personal" tabindex="0">
                     <i class="fas fa-user"></i>
                     <span>Información Personal</span>
                 </div>
-                <div class="nav-item" data-section="security">
+                <div class="nav-item" data-section="security" tabindex="0">
                     <i class="fas fa-shield-alt"></i>
                     <span>Seguridad</span>
                 </div>
-                <div class="nav-item" data-section="preferences">
+                <div class="nav-item" data-section="preferences" tabindex="0">
                     <i class="fas fa-bell"></i>
                     <span>Preferencias</span>
                 </div>
-                <div class="nav-item" data-section="activity">
+                <div class="nav-item" data-section="activity" tabindex="0">
                     <i class="fas fa-clock"></i>
                     <span>Historial de Actividad</span>
                 </div>
-                <div class="nav-item" data-section="account">
+                <div class="nav-item" data-section="account" tabindex="0">
                     <i class="fas fa-cog"></i>
                     <span>Gestión de Cuenta</span>
                 </div>
@@ -346,11 +151,10 @@
                 <span>Volver al Dashboard</span>
             </a>
         </div>
-
         <!-- Contenido principal -->
         <div class="content">
             <!-- Sección: Información Personal -->
-            <div class="section" id="personal-section">
+            <div class="section active" id="personal-section">
                 <h2 class="section-title">Información Personal</h2>
                 <div class="card">
                     <form>
@@ -368,7 +172,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-row">
                             <div class="form-col">
                                 <div class="form-group">
@@ -383,21 +186,18 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label for="address">Dirección</label>
                             <input type="text" id="address" value="Av. Libertador 1234, Santiago">
                         </div>
-
                         <div class="text-right">
                             <button type="submit" class="btn btn-primary">Guardar cambios</button>
                         </div>
                     </form>
                 </div>
             </div>
-
             <!-- Sección: Seguridad -->
-            <div class="section" id="security-section" style="display: none;">
+            <div class="section" id="security-section">
                 <h2 class="section-title">Seguridad</h2>
                 <div class="card">
                     <h3>Cambiar contraseña</h3>
@@ -419,7 +219,6 @@
                         </div>
                     </form>
                 </div>
-
                 <div class="card">
                     <h3>Autenticación de dos factores</h3>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -433,14 +232,12 @@
                     </div>
                 </div>
             </div>
-
             <!-- Sección: Preferencias -->
-            <div class="section" id="preferences-section" style="display: none;">
+            <div class="section" id="preferences-section">
                 <h2 class="section-title">Preferencias</h2>
                 <div class="card">
                     <h3>Notificaciones</h3>
-                    <div
-                        style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
                         <div>
                             <p style="font-weight: 500;">Correo electrónico</p>
                             <p style="font-size: 14px; color: #666;">Recibir facturas por correo electrónico</p>
@@ -461,7 +258,6 @@
                         </label>
                     </div>
                 </div>
-
                 <div class="card">
                     <h3>Idioma y formato</h3>
                     <div class="form-group">
@@ -485,9 +281,8 @@
                     </div>
                 </div>
             </div>
-
             <!-- Sección: Historial de Actividad -->
-            <div class="section" id="activity-section" style="display: none;">
+            <div class="section" id="activity-section">
                 <h2 class="section-title">Historial de Actividad</h2>
                 <div class="card" style="padding: 0;">
                     <table>
@@ -533,68 +328,68 @@
                         </tbody>
                     </table>
                     <div style="padding: 15px; background-color: #f5f5f5; border-top: 1px solid #e0e0e0;">
-                        <a href="#" style="font-size: 14px; color: #1a73e8; text-decoration: none;">Ver historial
-                            completo</a>
+                        <a href="#" style="font-size: 14px; color: #1a73e8; text-decoration: none;">Ver historial completo</a>
                     </div>
                 </div>
             </div>
-
             <!-- Sección: Gestión de Cuenta -->
-            <div class="section" id="account-section" style="display: none;">
+            <div class="section" id="account-section">
                 <h2 class="section-title">Gestión de Cuenta</h2>
                 <div class="card">
                     <h3>Descargar mis datos</h3>
-                    <p style="margin-bottom: 15px;">Puedes descargar todos tus datos personales y tu historial de
-                        actividad en la plataforma.</p>
+                    <p style="margin-bottom: 15px;">Puedes descargar todos tus datos personales y tu historial de actividad en la plataforma.</p>
                     <button class="btn btn-primary">Solicitar datos</button>
                 </div>
-
                 <div class="card">
                     <h3 style="color: #e53935;">Eliminar cuenta</h3>
-                    <p style="margin-bottom: 15px;">Esta acción eliminará permanentemente tu cuenta y todos tus datos.
-                        Esta acción no se puede deshacer.</p>
+                    <p style="margin-bottom: 15px;">Esta acción eliminará permanentemente tu cuenta y todos tus datos. Esta acción no se puede deshacer.</p>
                     <button class="btn btn-danger">Solicitar eliminación de cuenta</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script JavaScript para la navegación -->
+    <!-- Script JavaScript para navegación fluida -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Obtener los elementos de navegación y las secciones
             const navItems = document.querySelectorAll('.nav-item');
             const sections = document.querySelectorAll('.section');
+            let activeSection = document.querySelector('.section.active');
 
-            // Función para mostrar una sección y ocultar las demás
+            // Función para mostrar sección con animación
             function showSection(sectionId) {
                 sections.forEach(section => {
                     if (section.id === sectionId + '-section') {
-                        section.style.display = 'block';
+                        section.classList.add('active');
+                        // Scroll suave al inicio de la sección
+                        setTimeout(() => {
+                            section.scrollIntoView({ behavior: "smooth", block: "start" });
+                        }, 50);
+                        activeSection = section;
                     } else {
-                        section.style.display = 'none';
+                        section.classList.remove('active');
                     }
                 });
             }
 
-            // Agregar eventos de clic a los elementos de navegación
+            // Navegación por click y teclado (accesibilidad)
             navItems.forEach(item => {
                 item.addEventListener('click', function () {
-                    // Quitar la clase 'active' de todos los elementos de navegación
-                    navItems.forEach(navItem => {
-                        navItem.classList.remove('active');
-                    });
-
-                    // Agregar la clase 'active' al elemento de navegación seleccionado
+                    navItems.forEach(navItem => navItem.classList.remove('active'));
                     this.classList.add('active');
-
-                    // Mostrar la sección correspondiente
-                    const sectionId = this.getAttribute('data-section');
-                    showSection(sectionId);
+                    showSection(this.getAttribute('data-section'));
+                });
+                item.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        navItems.forEach(navItem => navItem.classList.remove('active'));
+                        this.classList.add('active');
+                        showSection(this.getAttribute('data-section'));
+                    }
                 });
             });
+
+            // Opcional: En móvil, hacer que el menú sea colapsable (puedes agregar un botón si necesitas)
         });
     </script>
 </body>
-
 </html>
