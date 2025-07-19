@@ -10,22 +10,18 @@
         body {
             background-color: #f8f9fa;
         }
-        
         .card {
             transition: transform 0.2s;
             border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        
         .card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        
         .icon-large {
             font-size: 3rem;
         }
-        
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -38,42 +34,33 @@
             align-items: center;
             z-index: 9999;
         }
-        
         .navbar-brand {
             font-weight: 600;
         }
-        
         .alert-warning {
             border-left: 4px solid #ffc107;
         }
-        
         .alert-success {
             border-left: 4px solid #28a745;
         }
-        
         .table th {
             background-color: #f8f9fa;
             font-weight: 600;
         }
-        
         .disabled-section {
             opacity: 0.5;
             pointer-events: none;
         }
-        
         .perfil-incompleto {
             border: 2px solid #ffc107;
             background-color: #fff3cd;
         }
-        
         .form-floating label {
             font-weight: 500;
         }
-        
         .btn-pulse {
             animation: pulse 2s infinite;
         }
-        
         @keyframes pulse {
             0% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -105,22 +92,22 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" onclick="mostrarSeccion('dashboard')">
+                        <a class="nav-link active" href="#" id="navDashboard">
                             <i class="bi bi-house-fill me-1"></i>Inicio
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="mostrarSeccion('facturas')" id="navFacturas">
+                        <a class="nav-link" href="#" id="navFacturas">
                             <i class="bi bi-receipt me-1"></i>Facturas
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="mostrarSeccion('reclamos')" id="navReclamos">
+                        <a class="nav-link" href="#" id="navReclamos">
                             <i class="bi bi-exclamation-triangle me-1"></i>Reclamos
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" onclick="mostrarSeccion('perfil')">
+                        <a class="nav-link" href="#" id="navPerfil">
                             <i class="bi bi-person-circle me-1"></i>Mi Perfil
                         </a>
                     </li>
@@ -130,7 +117,7 @@
                         <i class="bi bi-person-fill me-1"></i>
                         <span id="userDisplayName">Cargando...</span>
                     </span>
-                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">
+                    <button id="btnLogout" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
                     </button>
                 </div>
@@ -139,7 +126,7 @@
     </nav>
 
     <!-- Sección Dashboard Principal -->
-    <div id="seccionDashboard" class="seccion-contenido">
+    <div id="dashboard" class="seccion-dashboard">
         <main class="container my-4">
             <!-- Alerta de perfil incompleto -->
             <div class="alert alert-warning perfil-incompleto" id="alertaPerfilIncompleto" style="display: none;">
@@ -148,13 +135,12 @@
                     <div class="flex-grow-1">
                         <h5 class="alert-heading mb-1">¡Completa tu perfil para acceder a todos los servicios!</h5>
                         <p class="mb-2">Necesitas completar la información de tu suministro para verificar tu identidad y acceder a facturas y reclamos.</p>
-                        <button class="btn btn-warning btn-sm btn-pulse" onclick="mostrarSeccion('perfil')">
+                        <button class="btn btn-warning btn-sm btn-pulse" id="btnIrPerfil">
                             <i class="bi bi-pencil-fill me-1"></i>Completar Perfil Ahora
                         </button>
                     </div>
                 </div>
             </div>
-
             <!-- Welcome section -->
             <div class="row mb-4">
                 <div class="col-md-8">
@@ -173,7 +159,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Action cards -->
             <div class="row mb-5" id="seccionesAcceso">
                 <div class="col-md-4 mb-4">
@@ -182,7 +167,7 @@
                             <i class="bi bi-receipt icon-large text-primary mb-3"></i>
                             <h4 class="card-title">Facturas</h4>
                             <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
-                            <button class="btn btn-primary" onclick="mostrarSeccion('facturas')">
+                            <button class="btn btn-primary" id="btnVerFacturas">
                                 <i class="bi bi-eye me-1"></i>Ver Facturas
                             </button>
                         </div>
@@ -194,7 +179,7 @@
                             <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
                             <h4 class="card-title">Reclamos</h4>
                             <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
-                            <button class="btn btn-primary" onclick="mostrarSeccion('reclamos')">
+                            <button class="btn btn-primary" id="btnVerReclamos">
                                 <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
                             </button>
                         </div>
@@ -206,14 +191,13 @@
                             <i class="bi bi-person-circle icon-large text-success mb-3"></i>
                             <h4 class="card-title">Mi Perfil</h4>
                             <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y datos del suministro.</p>
-                            <button class="btn btn-primary" onclick="mostrarSeccion('perfil')">
+                            <button class="btn btn-primary" id="btnVerPerfil">
                                 <i class="bi bi-pencil me-1"></i>Ver Perfil
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-
             <!-- Information panels -->
             <div class="row">
                 <div class="col-lg-6 mb-4">
@@ -284,7 +268,7 @@
     </div>
 
     <!-- Sección Mi Perfil -->
-    <div id="seccionPerfil" class="seccion-contenido" style="display: none;">
+    <div id="perfil" class="seccion-dashboard" style="display: none;">
         <div class="container my-4">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -295,12 +279,10 @@
                             </h4>
                         </div>
                         <div class="card-body">
-                            <!-- Alerta de perfil incompleto -->
                             <div class="alert alert-info" id="infoCompletarPerfil">
                                 <i class="bi bi-info-circle me-2"></i>
                                 <strong>Importante:</strong> Completa todos los datos del suministro para verificar tu identidad y acceder a facturas y reclamos.
                             </div>
-
                             <form id="formPerfil">
                                 <h5 class="text-primary mb-3"><i class="bi bi-person me-2"></i>Datos Personales</h5>
                                 <div class="row mb-3">
@@ -331,15 +313,12 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <hr>
-
                                 <h5 class="text-success mb-3"><i class="bi bi-house me-2"></i>Datos del Suministro</h5>
                                 <div class="alert alert-warning">
                                     <i class="bi bi-shield-check me-2"></i>
                                     <strong>Verificación de Identidad:</strong> Estos datos deben coincidir exactamente con los registros de la cooperativa.
                                 </div>
-
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-floating">
@@ -379,16 +358,18 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="d-flex gap-2">
                                     <button type="submit" class="btn btn-success" id="btnGuardarPerfil">
                                         <i class="bi bi-check-circle me-1"></i>Guardar Perfil
                                     </button>
-                                    <button type="button" class="btn btn-secondary" onclick="mostrarSeccion('dashboard')">
+                                    <button type="button" class="btn btn-secondary" id="btnVolverDashboard">
                                         <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
                                     </button>
                                 </div>
                             </form>
+                            <div class="alert alert-success mt-3 d-none" id="mensajePerfilGuardado">
+                                <i class="bi bi-check-circle me-2"></i>¡Perfil guardado exitosamente!
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -397,34 +378,40 @@
     </div>
 
     <!-- Sección Facturas -->
-    <div id="seccionFacturas" class="seccion-contenido" style="display: none;">
+    <div id="facturas" class="seccion-dashboard" style="display: none;">
         <div class="container my-4">
             <h2 class="text-primary mb-4">
                 <i class="bi bi-receipt me-2"></i>Facturas y Pagos
             </h2>
-            <div class="alert alert-info">
+            <div class="alert alert-info" id="infoFacturas">
                 <i class="bi bi-info-circle me-2"></i>
                 Esta sección se habilitará una vez que completes y verifiques tu perfil.
             </div>
-            <button class="btn btn-primary" onclick="mostrarSeccion('dashboard')">
+            <button class="btn btn-primary" id="btnVolverDashboardFacturas">
                 <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
             </button>
+            <div id="contenedorFacturas" style="display:none;">
+                <!-- Aquí se mostrarán las facturas -->
+            </div>
         </div>
     </div>
 
     <!-- Sección Reclamos -->
-    <div id="seccionReclamos" class="seccion-contenido" style="display: none;">
+    <div id="reclamos" class="seccion-dashboard" style="display: none;">
         <div class="container my-4">
             <h2 class="text-primary mb-4">
                 <i class="bi bi-exclamation-triangle me-2"></i>Reclamos y Consultas
             </h2>
-            <div class="alert alert-info">
+            <div class="alert alert-info" id="infoReclamos">
                 <i class="bi bi-info-circle me-2"></i>
                 Esta sección se habilitará una vez que completes y verifiques tu perfil.
             </div>
-            <button class="btn btn-primary" onclick="mostrarSeccion('dashboard')">
+            <button class="btn btn-primary" id="btnVolverDashboardReclamos">
                 <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
             </button>
+            <div id="contenedorReclamos" style="display:none;">
+                <!-- Aquí se mostrarán los reclamos -->
+            </div>
         </div>
     </div>
 
@@ -440,7 +427,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    
     <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
@@ -455,58 +441,41 @@
             appId: "1:980063915524:web:e991b552b607d2447aef51",
             measurementId: "G-V6Z34N9V06"
         };
-
-        // Inicializar Firebase
-        if (!firebase.apps || !firebase.apps.length) {
+        if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Variables globales del sistema
+        // Variables globales
         let currentUser = null;
         let userProfile = null;
         let perfilCompleto = false;
 
-        // Verificar autenticación al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard iniciando...');
             verificarAutenticacion();
         });
 
-        // Verificar estado de autenticación
         function verificarAutenticacion() {
             auth.onAuthStateChanged(function(user) {
                 const loadingOverlay = document.getElementById('loadingOverlay');
-                
                 if (user) {
-                    console.log('Usuario autenticado:', user.uid);
                     currentUser = user;
                     mostrarDashboard();
                     cargarPerfilUsuario(user.uid);
                     loadingOverlay.style.display = 'none';
                 } else {
-                    console.log('Usuario no autenticado, redirigiendo...');
                     mostrarMensajeNoAutenticado();
                     loadingOverlay.style.display = 'none';
                 }
             });
         }
 
-        // Mostrar dashboard para usuario autenticado
         function mostrarDashboard() {
-            document.body.style.display = 'block';
-            
-            // Mostrar nombre del usuario
-            const displayName = currentUser.displayName || currentUser.email || 'Usuario';
-            document.getElementById('userDisplayName').textContent = displayName;
-            
-            // Mostrar sección dashboard por defecto
             mostrarSeccion('dashboard');
+            document.getElementById('userDisplayName').textContent = currentUser.displayName || currentUser.email || 'Usuario';
         }
 
-        // Mostrar mensaje para usuario no autenticado
         function mostrarMensajeNoAutenticado() {
             document.body.innerHTML = `
                 <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
@@ -524,111 +493,96 @@
             `;
         }
 
-        // Cargar perfil del usuario
         function cargarPerfilUsuario(userId) {
-            console.log('Cargando perfil del usuario:', userId);
-            
             db.collection('usuarios').doc(userId).get()
                 .then((doc) => {
                     if (doc.exists) {
                         userProfile = doc.data();
-                        console.log('Perfil encontrado:', userProfile);
                         verificarCompletitudPerfil();
                         cargarDatosEnFormulario();
                         if (perfilCompleto) {
                             cargarDatosFacturacion();
+                            cargarDatosReclamos();
                         }
                     } else {
-                        console.log('No se encontró perfil del usuario');
                         crearPerfilInicial(userId);
                     }
                 })
                 .catch((error) => {
-                    console.error('Error al cargar perfil:', error);
-                    mostrarError('Error al cargar datos del perfil');
+                    alert('Error al cargar datos del perfil');
                 });
         }
 
-        // Crear perfil inicial
         function crearPerfilInicial(userId) {
             const perfilInicial = {
                 email: currentUser.email,
                 fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
                 perfilCompleto: false
             };
-
             db.collection('usuarios').doc(userId).set(perfilInicial)
                 .then(() => {
-                    console.log('Perfil inicial creado');
                     userProfile = perfilInicial;
                     verificarCompletitudPerfil();
                 })
                 .catch((error) => {
-                    console.error('Error al crear perfil inicial:', error);
+                    alert('Error al crear perfil inicial');
                 });
         }
 
-        // Verificar si el perfil está completo
         function verificarCompletitudPerfil() {
             if (!userProfile) {
                 perfilCompleto = false;
                 return;
             }
-
-            // Campos requeridos para considerar el perfil completo
             const camposRequeridos = [
-                'nombre', 'dni', 'numeroSuministro', 'numeroMedidor', 
+                'nombre', 'dni', 'numeroSuministro', 'numeroMedidor',
                 'direccionSuministro', 'titularSuministro', 'categoriaServicio'
             ];
-
-            perfilCompleto = camposRequeridos.every(campo => 
+            perfilCompleto = camposRequeridos.every(campo =>
                 userProfile[campo] && userProfile[campo].trim() !== ''
             );
-
-            console.log('Perfil completo:', perfilCompleto);
             actualizarInterfazSegunPerfil();
         }
 
-        // Actualizar interfaz según estado del perfil
         function actualizarInterfazSegunPerfil() {
             const alertaPerfil = document.getElementById('alertaPerfilIncompleto');
             const cardFacturas = document.getElementById('cardFacturas');
             const cardReclamos = document.getElementById('cardReclamos');
             const navFacturas = document.getElementById('navFacturas');
             const navReclamos = document.getElementById('navReclamos');
+            const infoFacturas = document.getElementById('infoFacturas');
+            const infoReclamos = document.getElementById('infoReclamos');
+            const contenedorFacturas = document.getElementById('contenedorFacturas');
+            const contenedorReclamos = document.getElementById('contenedorReclamos');
 
             if (!perfilCompleto) {
-                // Mostrar alerta de perfil incompleto
                 alertaPerfil.style.display = 'block';
-                
-                // Deshabilitar secciones de facturas y reclamos
                 cardFacturas.classList.add('disabled-section');
                 cardReclamos.classList.add('disabled-section');
                 navFacturas.classList.add('disabled');
                 navReclamos.classList.add('disabled');
-                
-                // Agregar tooltips
-                cardFacturas.title = 'Completa tu perfil para acceder a las facturas';
-                cardReclamos.title = 'Completa tu perfil para acceder a los reclamos';
+                infoFacturas.style.display = 'block';
+                infoReclamos.style.display = 'block';
+                contenedorFacturas.style.display = 'none';
+                contenedorReclamos.style.display = 'none';
             } else {
-                // Ocultar alerta y habilitar todo
                 alertaPerfil.style.display = 'none';
                 cardFacturas.classList.remove('disabled-section');
                 cardReclamos.classList.remove('disabled-section');
                 navFacturas.classList.remove('disabled');
                 navReclamos.classList.remove('disabled');
+                infoFacturas.style.display = 'none';
+                infoReclamos.style.display = 'none';
+                contenedorFacturas.style.display = 'block';
+                contenedorReclamos.style.display = 'block';
             }
         }
 
-        // Cargar datos en el formulario de perfil
         function cargarDatosEnFormulario() {
             if (!userProfile) return;
-
             document.getElementById('email').value = currentUser.email;
-            
-            const campos = ['nombre', 'telefono', 'dni', 'numeroSuministro', 
-                           'numeroMedidor', 'direccionSuministro', 'titularSuministro', 'categoriaServicio'];
-            
+            const campos = ['nombre', 'telefono', 'dni', 'numeroSuministro',
+                'numeroMedidor', 'direccionSuministro', 'titularSuministro', 'categoriaServicio'];
             campos.forEach(campo => {
                 const elemento = document.getElementById(campo);
                 if (elemento && userProfile[campo]) {
@@ -637,20 +591,107 @@
             });
         }
 
-        // Manejar envío del formulario de perfil
         document.getElementById('formPerfil').addEventListener('submit', function(e) {
             e.preventDefault();
             guardarPerfil();
         });
 
-        // Guardar perfil
         function guardarPerfil() {
             const btnGuardar = document.getElementById('btnGuardarPerfil');
             btnGuardar.disabled = true;
             btnGuardar.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Guardando...';
-
             const datosFormulario = {
                 nombre: document.getElementById('nombre').value,
                 telefono: document.getElementById('telefono').value,
                 dni: document.getElementById('dni').value,
-                numeroSuministro:
+                numeroSuministro: document.getElementById('numeroSuministro').value,
+                numeroMedidor: document.getElementById('numeroMedidor').value,
+                direccionSuministro: document.getElementById('direccionSuministro').value,
+                titularSuministro: document.getElementById('titularSuministro').value,
+                categoriaServicio: document.getElementById('categoriaServicio').value,
+            };
+            db.collection('usuarios').doc(currentUser.uid).update(datosFormulario)
+                .then(() => {
+                    userProfile = Object.assign({}, userProfile, datosFormulario);
+                    verificarCompletitudPerfil();
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
+                    mostrarMensajePerfilGuardado();
+                    cargarDatosEnFormulario();
+                })
+                .catch((error) => {
+                    alert('Error al guardar datos del perfil');
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
+                });
+        }
+
+        function mostrarMensajePerfilGuardado() {
+            const mensaje = document.getElementById('mensajePerfilGuardado');
+            if (mensaje) {
+                mensaje.classList.remove('d-none');
+                setTimeout(() => { mensaje.classList.add('d-none'); }, 4000);
+            }
+        }
+
+        function mostrarSeccion(seccionId) {
+            document.querySelectorAll('.seccion-dashboard').forEach(sec => sec.style.display = 'none');
+            const seccion = document.getElementById(seccionId);
+            if (seccion) seccion.style.display = 'block';
+        }
+
+        // Facturas y Reclamos - Ejemplo de carga vacía (puedes personalizar)
+        function cargarDatosFacturacion() {
+            const contenedor = document.getElementById('contenedorFacturas');
+            contenedor.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Aquí aparecerán tus facturas cuando el sistema esté conectado con la base de datos.
+                </div>
+            `;
+        }
+        function cargarDatosReclamos() {
+            const contenedor = document.getElementById('contenedorReclamos');
+            contenedor.innerHTML = `
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Aquí aparecerán tus reclamos cuando el sistema esté conectado con la base de datos.
+                </div>
+            `;
+        }
+
+        // Navegación
+        document.getElementById('navDashboard').addEventListener('click', () => mostrarSeccion('dashboard'));
+        document.getElementById('navPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
+        document.getElementById('navFacturas').addEventListener('click', () => {
+            if(perfilCompleto) mostrarSeccion('facturas');
+        });
+        document.getElementById('navReclamos').addEventListener('click', () => {
+            if(perfilCompleto) mostrarSeccion('reclamos');
+        });
+        document.getElementById('btnIrPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
+        document.getElementById('btnVerPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
+        document.getElementById('btnVerFacturas').addEventListener('click', () => {
+            if(perfilCompleto) mostrarSeccion('facturas');
+        });
+        document.getElementById('btnVerReclamos').addEventListener('click', () => {
+            if(perfilCompleto) mostrarSeccion('reclamos');
+        });
+        document.getElementById('btnVolverDashboard').addEventListener('click', () => mostrarSeccion('dashboard'));
+        document.getElementById('btnVolverDashboardFacturas').addEventListener('click', () => mostrarSeccion('dashboard'));
+        document.getElementById('btnVolverDashboardReclamos').addEventListener('click', () => mostrarSeccion('dashboard'));
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', function() {
+            auth.signOut().then(() => {
+                window.location.href = "index.html";
+            }).catch(() => {
+                alert('No se pudo cerrar sesión. Intente nuevamente.');
+            });
+        });
+
+        // Ir a inicio desde logo
+        window.irAInicio = function() { mostrarSeccion('dashboard'); };
+    </script>
+</body>
+</html>
