@@ -80,6 +80,170 @@
         </div>
     </nav>
 
+    <!-- Sección Dashboard Principal -->
+    <div id="dashboard" class="seccion-dashboard">
+        <main class="container my-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="text-primary mb-3">Bienvenido a tu Oficina Virtual</h2>
+                    <p class="lead text-muted">Accede a todos los servicios de la cooperativa desde aquí. Gestiona tus facturas, consulta tu consumo y mantente al día con tus pagos.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-success" id="notificacionVencimiento">
+                        <h6 class="alert-heading"><i class="bi bi-calendar-check me-2"></i>Próximo Vencimiento</h6>
+                        <div id="proximoVencimiento">
+                            <div class="d-flex justify-content-center">
+                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                <span>Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Action cards -->
+            <div class="row mb-5" id="seccionesAcceso">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" id="cardFacturas">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-receipt icon-large text-primary mb-3"></i>
+                            <h4 class="card-title">Facturas</h4>
+                            <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
+                            <button class="btn btn-primary" id="btnVerFacturas">
+                                <i class="bi bi-eye me-1"></i>Ver Facturas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100" id="cardReclamos">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
+                            <h4 class="card-title">Reclamos</h4>
+                            <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
+                            <button class="btn btn-primary" id="btnVerReclamos">
+                                <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-person-circle icon-large text-success mb-3"></i>
+                            <h4 class="card-title">Mi Perfil</h4>
+                            <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y datos del suministro.</p>
+                            <button class="btn btn-primary" id="btnVerPerfil">
+                                <i class="bi bi-pencil me-1"></i>Ver Perfil
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sección Mi Perfil -->
+    <div id="perfil" class="seccion-dashboard" style="display: none;">
+        <div class="container my-4">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">
+                                <i class="bi bi-person-circle me-2"></i>Mi Perfil
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="formPerfil">
+                                <h5 class="text-primary mb-3"><i class="bi bi-person me-2"></i>Datos Personales</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="nombre" placeholder="Nombre completo" required>
+                                            <label for="nombre">Nombre Completo</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="email" placeholder="Email" readonly>
+                                            <label for="email">Email</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="tel" class="form-control" id="telefono" placeholder="Teléfono">
+                                            <label for="telefono">Teléfono</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="dni" placeholder="DNI" required>
+                                            <label for="dni">DNI</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h5 class="text-success mb-3"><i class="bi bi-house me-2"></i>Datos del Suministro</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="numeroSuministro" placeholder="Número de Suministro" required>
+                                            <label for="numeroSuministro">Número de Suministro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="numeroMedidor" placeholder="Número de Medidor" required>
+                                            <label for="numeroMedidor">Número de Medidor</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="direccionSuministro" placeholder="Dirección del Suministro" required>
+                                        <label for="direccionSuministro">Dirección del Suministro</label>
+                                    </div>
+                                </div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="titularSuministro" placeholder="Titular del Suministro" required>
+                                            <label for="titularSuministro">Titular del Suministro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-select" id="categoriaServicio" required>
+                                                <option value="">Seleccionar...</option>
+                                                <option value="residencial">Residencial</option>
+                                                <option value="comercial">Comercial</option>
+                                                <option value="industrial">Industrial</option>
+                                            </select>
+                                            <label for="categoriaServicio">Categoría del Servicio</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-success" id="btnGuardarPerfil">
+                                        <i class="bi bi-check-circle me-1"></i>Guardar Perfil
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="btnVolverDashboard">
+                                        <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+                                    </button>
+                                </div>
+                            </form>
+                            <div class="alert alert-success mt-3 d-none" id="mensajePerfilGuardado">
+                                <i class="bi bi-check-circle me-2"></i>¡Perfil guardado exitosamente!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Sección Facturas -->
     <div id="facturas" class="seccion-dashboard" style="display: none;">
         <div class="container my-4">
@@ -89,6 +253,25 @@
             <div id="tablaFacturas"></div>
             <h3 class="mt-5 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Comprobantes Impagos</h3>
             <div id="tablaImpagos"></div>
+        </div>
+    </div>
+
+    <!-- Sección Reclamos -->
+    <div id="reclamos" class="seccion-dashboard" style="display: none;">
+        <div class="container my-4">
+            <h2 class="text-primary mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>Reclamos y Consultas
+            </h2>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Esta sección se habilitará una vez que completes y verifiques tu perfil.
+            </div>
+            <button class="btn btn-primary" onclick="mostrarSeccion('dashboard')">
+                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+            </button>
+            <div id="contenedorReclamos" style="display:none;">
+                <!-- Aquí se mostrarán los reclamos -->
+            </div>
         </div>
     </div>
 
@@ -137,7 +320,7 @@
                     currentUser = user;
                     cargarPerfilUsuario(user.uid);
                     document.getElementById('userDisplayName').textContent = user.email || "Usuario";
-                    mostrarSeccion('facturas');
+                    mostrarSeccion('dashboard');
                     loadingOverlay.style.display = 'none';
                 } else {
                     document.body.innerHTML = `
@@ -163,6 +346,7 @@
                 .then((doc) => {
                     if (doc.exists) {
                         userProfile = doc.data();
+                        cargarDatosEnFormulario();
                         cargarMisFacturas(userProfile.numeroSuministro);
                         cargarMisImpagos(userProfile.numeroSuministro);
                     } else {
@@ -191,11 +375,13 @@
                 alert('No se pudo cerrar sesión. Intente nuevamente.');
             });
         });
+        document.getElementById('btnVerFacturas').addEventListener('click', () => mostrarSeccion('facturas'));
+        document.getElementById('btnVerPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
+        document.getElementById('btnVerReclamos').addEventListener('click', () => mostrarSeccion('reclamos'));
+        document.getElementById('btnVolverDashboard')?.addEventListener('click', () => mostrarSeccion('dashboard'));
         window.irAInicio = function() { mostrarSeccion('dashboard'); };
 
-        // === Leer datos de Google Sheets ===
-
-        // Utilidad para convertir CSV a array de objetos
+        // === Utilidad para convertir CSV a array de objetos ===
         function parseCSV(text, delimiter = ';') {
             const lines = text.trim().split('\n');
             const headers = lines[0].split(delimiter).map(h => h.trim());
@@ -205,36 +391,82 @@
             });
         }
 
-        // Leer facturas de Google Sheets
+        // === Mostrar datos en formulario de perfil ===
+        function cargarDatosEnFormulario() {
+            if (!userProfile) return;
+            document.getElementById('email').value = currentUser.email;
+            const campos = ['nombre', 'telefono', 'dni', 'numeroSuministro', 'numeroMedidor', 'direccionSuministro', 'titularSuministro', 'categoriaServicio'];
+            campos.forEach(campo => {
+                const elemento = document.getElementById(campo);
+                if (elemento && userProfile[campo]) {
+                    elemento.value = userProfile[campo];
+                }
+            });
+        }
+
+        document.getElementById('formPerfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+            guardarPerfil();
+        });
+
+        function guardarPerfil() {
+            const btnGuardar = document.getElementById('btnGuardarPerfil');
+            btnGuardar.disabled = true;
+            btnGuardar.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Guardando...';
+            const datosFormulario = {
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                dni: document.getElementById('dni').value,
+                numeroSuministro: document.getElementById('numeroSuministro').value,
+                numeroMedidor: document.getElementById('numeroMedidor').value,
+                direccionSuministro: document.getElementById('direccionSuministro').value,
+                titularSuministro: document.getElementById('titularSuministro').value,
+                categoriaServicio: document.getElementById('categoriaServicio').value
+            };
+            db.collection('usuarios').doc(currentUser.uid).update(datosFormulario)
+                .then(() => {
+                    userProfile = Object.assign({}, userProfile, datosFormulario);
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
+                    mostrarMensajePerfilGuardado();
+                    cargarDatosEnFormulario();
+                })
+                .catch((error) => {
+                    alert('Error al guardar datos del perfil');
+                    btnGuardar.disabled = false;
+                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
+                });
+        }
+
+        function mostrarMensajePerfilGuardado() {
+            const mensaje = document.getElementById('mensajePerfilGuardado');
+            if (mensaje) {
+                mensaje.classList.remove('d-none');
+                setTimeout(() => { mensaje.classList.add('d-none'); }, 4000);
+            }
+        }
+
+        // === Mostrar facturas de Google Sheets ===
         function cargarMisFacturas(numeroSuministro) {
-            // Link CSV export de la hoja de facturación (Hoja 03-2025)
-            // OJO: Si la hoja cambia de nombre, actualiza el &sheet=03-2025
             const SHEET_FACTURAS_URL = "https://docs.google.com/spreadsheets/d/11aj5qSGy06wOCPkKFXUPdi4akoLWYNlgCFjZYJ3D-2Y/gviz/tq?tqx=out:csv&sheet=03-2025";
             fetch(SHEET_FACTURAS_URL)
                 .then(res => res.text())
                 .then(csvText => {
                     const facturas = parseCSV(csvText);
-                    // Filtrar por número de suministro
                     const mias = facturas.filter(f => f['Usuario'] && f['Usuario'].trim() === numeroSuministro);
                     let html = `<table class="table"><thead>
                         <tr><th>Periodo</th><th>Vencimiento</th><th>Importe</th><th>PDF</th></tr>
                     </thead><tbody>`;
                     mias.forEach(f => {
-                        // El nombre de archivo está en la columna "archivo"
-                        // Si tienes el fileID en esa columna (por ejemplo: 1vRr...xyz), arma el link así:
+                        // Si tienes el fileID, arma el link directo:
                         // let pdfLink = `https://drive.google.com/file/d/${f['archivo']}/view?usp=sharing`;
-
-                        // Si solo tienes el nombre (ej: 20250709-96-0003-00037689-00001.pdf), arma el link así:
-                        // let pdfLink = `https://drive.google.com/drive/u/3/folders/1NKtdt1GlPYQwe-XKYdqPp3jF9dSloPWA`; // solo la carpeta
-                        // Pero para el link directo, lo mejor es tener el fileID en la hoja
-
-                        // Si tienes el nombre, busca el PDF manualmente en la carpeta compartida para cada usuario, o puedes mostrar el nombre para que lo busque.
-                        let pdfLink = f['archivo'] ? `https://drive.google.com/drive/u/3/folders/1NKtdt1GlPYQwe-XKYdqPp3jF9dSloPWA` : '#';
+                        // Si solo tienes el nombre, muestra el nombre y el link a la carpeta
+                        let pdfLink = f['archivo'] ? `https://drive.google.com/drive/folders/1NKtdt1GlPYQwe-XKYdqPp3jF9dSloPWA` : '#';
                         html += `<tr>
                             <td>${f.Periodo}</td>
                             <td>${f.Vencimiento}</td>
                             <td>$${parseFloat(f.Importe).toLocaleString("es-AR")}</td>
-                            <td>${f['archivo'] ? `<span>${f['archivo']}</span>` : 'No disponible'}</td>
+                            <td>${f['archivo'] ? `<span>${f['archivo']}</span> <a href="${pdfLink}" target="_blank" class="btn btn-sm btn-success"><i class="bi bi-file-earmark-pdf"></i>Ver carpeta</a>` : 'No disponible'}</td>
                         </tr>`;
                     });
                     html += `</tbody></table>`;
@@ -245,15 +477,13 @@
                 });
         }
 
-        // Leer comprobantes impagos de Google Sheets
+        // === Mostrar comprobantes impagos de Google Sheets ===
         function cargarMisImpagos(numeroSuministro) {
-            // Link CSV export de la hoja de impagos (Hoja 03-2025)
             const SHEET_IMPAGOS_URL = "https://docs.google.com/spreadsheets/d/1m7GnmOaARUHDZbn5gGPCUV3mfqElYPl0WcnZsQj6l8I/gviz/tq?tqx=out:csv&sheet=03-2025";
             fetch(SHEET_IMPAGOS_URL)
                 .then(res => res.text())
                 .then(csvText => {
                     const impagos = parseCSV(csvText);
-                    // Filtrar por número de suministro
                     const mios = impagos.filter(f => f['Usuario'] && f['Usuario'].trim() === numeroSuministro);
                     let html = `<table class="table"><thead>
                         <tr><th>Fecha Emisión</th><th>Comprobante</th><th>Importe</th></tr>
