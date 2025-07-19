@@ -7,65 +7,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .card {
-            transition: transform 0.2s;
-            border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-        .icon-large {
-            font-size: 3rem;
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        .navbar-brand {
-            font-weight: 600;
-        }
-        .alert-warning {
-            border-left: 4px solid #ffc107;
-        }
-        .alert-success {
-            border-left: 4px solid #28a745;
-        }
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-        }
-        .disabled-section {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-        .perfil-incompleto {
-            border: 2px solid #ffc107;
-            background-color: #fff3cd;
-        }
-        .form-floating label {
-            font-weight: 500;
-        }
-        .btn-pulse {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        body { background-color: #f8f9fa; }
+        .card { transition: transform 0.2s; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .card:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.15);}
+        .icon-large { font-size: 3rem;}
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; justify-content: center; align-items: center; z-index: 9999;}
+        .navbar-brand { font-weight: 600;}
+        .alert-warning { border-left: 4px solid #ffc107;}
+        .alert-success { border-left: 4px solid #28a745;}
+        .table th { background-color: #f8f9fa; font-weight: 600;}
+        .disabled-section { opacity: 0.5; pointer-events: none;}
+        .perfil-incompleto { border: 2px solid #ffc107; background-color: #fff3cd;}
+        .form-floating label { font-weight: 500;}
+        .btn-pulse { animation: pulse 2s infinite;}
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -125,301 +80,22 @@
         </div>
     </nav>
 
-    <!-- Sección Dashboard Principal -->
-    <div id="dashboard" class="seccion-dashboard">
-        <main class="container my-4">
-            <!-- Alerta de perfil incompleto -->
-            <div class="alert alert-warning perfil-incompleto" id="alertaPerfilIncompleto" style="display: none;">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
-                    <div class="flex-grow-1">
-                        <h5 class="alert-heading mb-1">¡Completa tu perfil para acceder a todos los servicios!</h5>
-                        <p class="mb-2">Necesitas completar la información de tu suministro para verificar tu identidad y acceder a facturas y reclamos.</p>
-                        <button class="btn btn-warning btn-sm btn-pulse" id="btnIrPerfil">
-                            <i class="bi bi-pencil-fill me-1"></i>Completar Perfil Ahora
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <!-- Welcome section -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <h2 class="text-primary mb-3">Bienvenido a tu Oficina Virtual</h2>
-                    <p class="lead text-muted">Accede a todos los servicios de la cooperativa desde aquí. Gestiona tus facturas, consulta tu consumo y mantente al día con tus pagos.</p>
-                </div>
-                <div class="col-md-4">
-                    <div class="alert alert-success" id="notificacionVencimiento">
-                        <h6 class="alert-heading"><i class="bi bi-calendar-check me-2"></i>Próximo Vencimiento</h6>
-                        <div id="proximoVencimiento">
-                            <div class="d-flex justify-content-center">
-                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
-                                <span>Cargando...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Action cards -->
-            <div class="row mb-5" id="seccionesAcceso">
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100" id="cardFacturas">
-                        <div class="card-body text-center p-4">
-                            <i class="bi bi-receipt icon-large text-primary mb-3"></i>
-                            <h4 class="card-title">Facturas</h4>
-                            <p class="card-text text-muted">Revisa tu historial de facturas, verifica vencimientos y realiza tus pagos online.</p>
-                            <button class="btn btn-primary" id="btnVerFacturas">
-                                <i class="bi bi-eye me-1"></i>Ver Facturas
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100" id="cardReclamos">
-                        <div class="card-body text-center p-4">
-                            <i class="bi bi-exclamation-triangle icon-large text-warning mb-3"></i>
-                            <h4 class="card-title">Reclamos</h4>
-                            <p class="card-text text-muted">Gestiona tus reclamos, solicitudes de servicio y consulta el estado de tus reportes.</p>
-                            <button class="btn btn-primary" id="btnVerReclamos">
-                                <i class="bi bi-plus-circle me-1"></i>Gestionar Reclamos
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center p-4">
-                            <i class="bi bi-person-circle icon-large text-success mb-3"></i>
-                            <h4 class="card-title">Mi Perfil</h4>
-                            <p class="card-text text-muted">Actualiza tus datos personales, información de contacto y datos del suministro.</p>
-                            <button class="btn btn-primary" id="btnVerPerfil">
-                                <i class="bi bi-pencil me-1"></i>Ver Perfil
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Information panels -->
-            <div class="row">
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-graph-up me-2"></i>Últimos Consumos
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th><i class="bi bi-calendar3 me-1"></i>Período</th>
-                                            <th><i class="bi bi-droplet me-1"></i>Consumo (m³)</th>
-                                            <th><i class="bi bi-cash me-1"></i>Monto</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="tablaConsumos">
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4">
-                                                <div class="d-flex justify-content-center align-items-center">
-                                                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
-                                                    <span>Cargando datos...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header bg-success text-white">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-telephone me-2"></i>Contacto Rápido
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <p class="card-text mb-4">¿Tienes alguna consulta o emergencia? Contáctanos directamente por cualquiera de estos medios:</p>
-                            <div class="d-grid gap-2">
-                                <a href="https://wa.me/5492914254498" class="btn btn-success" target="_blank">
-                                    <i class="bi bi-whatsapp me-2"></i>WhatsApp - Consultas Inmediatas
-                                </a>
-                                <a href="tel:+5492914254498" class="btn btn-info">
-                                    <i class="bi bi-telephone-fill me-2"></i>Llamar - Emergencias
-                                </a>
-                                <a href="mailto:coopaguagolf@gmail.com" class="btn btn-secondary">
-                                    <i class="bi bi-envelope-fill me-2"></i>Email - Consultas Generales
-                                </a>
-                            </div>
-                            <div class="mt-3 p-3 bg-light rounded">
-                                <small class="text-muted">
-                                    <i class="bi bi-clock me-1"></i>
-                                    <strong>Horarios de atención:</strong><br>
-                                    Lunes a Viernes: 8:00 - 16:00<br>
-                                    Sábados: 9:00 - 13:00
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Sección Mi Perfil -->
-    <div id="perfil" class="seccion-dashboard" style="display: none;">
-        <div class="container my-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="card">
-                        <div class="card-header bg-primary text-white">
-                            <h4 class="mb-0">
-                                <i class="bi bi-person-circle me-2"></i>Mi Perfil
-                            </h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="alert alert-info" id="infoCompletarPerfil">
-                                <i class="bi bi-info-circle me-2"></i>
-                                <strong>Importante:</strong> Completa todos los datos del suministro para verificar tu identidad y acceder a facturas y reclamos.
-                            </div>
-                            <form id="formPerfil">
-                                <h5 class="text-primary mb-3"><i class="bi bi-person me-2"></i>Datos Personales</h5>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="nombre" placeholder="Nombre completo" required>
-                                            <label for="nombre">Nombre Completo</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="email" class="form-control" id="email" placeholder="Email" readonly>
-                                            <label for="email">Email</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="tel" class="form-control" id="telefono" placeholder="Teléfono">
-                                            <label for="telefono">Teléfono</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="dni" placeholder="DNI" required>
-                                            <label for="dni">DNI</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <hr>
-                                <h5 class="text-success mb-3"><i class="bi bi-house me-2"></i>Datos del Suministro</h5>
-                                <div class="alert alert-warning">
-                                    <i class="bi bi-shield-check me-2"></i>
-                                    <strong>Verificación de Identidad:</strong> Estos datos deben coincidir exactamente con los registros de la cooperativa.
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="numeroSuministro" placeholder="Número de Suministro" required>
-                                            <label for="numeroSuministro">Número de Suministro</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="numeroMedidor" placeholder="Número de Medidor" required>
-                                            <label for="numeroMedidor">Número de Medidor</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="direccionSuministro" placeholder="Dirección del Suministro" required>
-                                        <label for="direccionSuministro">Dirección del Suministro</label>
-                                    </div>
-                                </div>
-                                <div class="row mb-4">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="titularSuministro" placeholder="Titular del Suministro" required>
-                                            <label for="titularSuministro">Titular del Suministro</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <select class="form-select" id="categoriaServicio" required>
-                                                <option value="">Seleccionar...</option>
-                                                <option value="residencial">Residencial</option>
-                                                <option value="comercial">Comercial</option>
-                                                <option value="industrial">Industrial</option>
-                                            </select>
-                                            <label for="categoriaServicio">Categoría del Servicio</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-2">
-                                    <button type="submit" class="btn btn-success" id="btnGuardarPerfil">
-                                        <i class="bi bi-check-circle me-1"></i>Guardar Perfil
-                                    </button>
-                                    <button type="button" class="btn btn-secondary" id="btnVolverDashboard">
-                                        <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
-                                    </button>
-                                </div>
-                            </form>
-                            <div class="alert alert-success mt-3 d-none" id="mensajePerfilGuardado">
-                                <i class="bi bi-check-circle me-2"></i>¡Perfil guardado exitosamente!
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Sección Facturas -->
     <div id="facturas" class="seccion-dashboard" style="display: none;">
         <div class="container my-4">
             <h2 class="text-primary mb-4">
-                <i class="bi bi-receipt me-2"></i>Facturas y Pagos
+                <i class="bi bi-receipt me-2"></i>Mis Facturas
             </h2>
-            <div class="alert alert-info" id="infoFacturas">
-                <i class="bi bi-info-circle me-2"></i>
-                Esta sección se habilitará una vez que completes y verifiques tu perfil.
-            </div>
-            <button class="btn btn-primary" id="btnVolverDashboardFacturas">
-                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
-            </button>
-            <div id="contenedorFacturas" style="display:none;">
-                <!-- Aquí se mostrarán las facturas -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección Reclamos -->
-    <div id="reclamos" class="seccion-dashboard" style="display: none;">
-        <div class="container my-4">
-            <h2 class="text-primary mb-4">
-                <i class="bi bi-exclamation-triangle me-2"></i>Reclamos y Consultas
-            </h2>
-            <div class="alert alert-info" id="infoReclamos">
-                <i class="bi bi-info-circle me-2"></i>
-                Esta sección se habilitará una vez que completes y verifiques tu perfil.
-            </div>
-            <button class="btn btn-primary" id="btnVolverDashboardReclamos">
-                <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
-            </button>
-            <div id="contenedorReclamos" style="display:none;">
-                <!-- Aquí se mostrarán los reclamos -->
-            </div>
+            <div id="tablaFacturas"></div>
+            <h3 class="mt-5 text-danger"><i class="bi bi-exclamation-triangle me-2"></i>Comprobantes Impagos</h3>
+            <div id="tablaImpagos"></div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="bg-light text-center py-4 mt-5">
         <div class="container">
-            <p class="mb-0 text-muted">&copy; 2025 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
-            <small class="text-muted">Sierra de la Ventana - Buenos Aires, Argentina</small>
+            <p class="mb-0 text-muted">&copy; 2025 Cooperativa Agua Golf</p>
         </div>
     </footer>
 
@@ -447,10 +123,8 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Variables globales
         let currentUser = null;
         let userProfile = null;
-        let perfilCompleto = false;
 
         document.addEventListener('DOMContentLoaded', function() {
             verificarAutenticacion();
@@ -461,36 +135,27 @@
                 const loadingOverlay = document.getElementById('loadingOverlay');
                 if (user) {
                     currentUser = user;
-                    mostrarDashboard();
                     cargarPerfilUsuario(user.uid);
+                    document.getElementById('userDisplayName').textContent = user.email || "Usuario";
+                    mostrarSeccion('facturas');
                     loadingOverlay.style.display = 'none';
                 } else {
-                    mostrarMensajeNoAutenticado();
-                    loadingOverlay.style.display = 'none';
+                    document.body.innerHTML = `
+                        <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
+                            <div class="text-center">
+                                <div class="alert alert-warning p-4">
+                                    <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+                                    <h3>Acceso Restringido</h3>
+                                    <p class="mb-3">Necesitas iniciar sesión para acceder al dashboard.</p>
+                                    <a href="index.html" class="btn btn-primary">
+                                        <i class="bi bi-arrow-left me-1"></i>Volver al Inicio
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
                 }
             });
-        }
-
-        function mostrarDashboard() {
-            mostrarSeccion('dashboard');
-            document.getElementById('userDisplayName').textContent = currentUser.displayName || currentUser.email || 'Usuario';
-        }
-
-        function mostrarMensajeNoAutenticado() {
-            document.body.innerHTML = `
-                <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
-                    <div class="text-center">
-                        <div class="alert alert-warning p-4">
-                            <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
-                            <h3>Acceso Restringido</h3>
-                            <p class="mb-3">Necesitas iniciar sesión para acceder al dashboard.</p>
-                            <a href="index.html" class="btn btn-primary">
-                                <i class="bi bi-arrow-left me-1"></i>Volver al Inicio
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
         }
 
         function cargarPerfilUsuario(userId) {
@@ -498,140 +163,15 @@
                 .then((doc) => {
                     if (doc.exists) {
                         userProfile = doc.data();
-                        verificarCompletitudPerfil();
-                        cargarDatosEnFormulario();
-                        if (perfilCompleto) {
-                            cargarDatosFacturacion();
-                            cargarDatosReclamos();
-                        }
+                        cargarMisFacturas(userProfile.numeroSuministro);
+                        cargarMisImpagos(userProfile.numeroSuministro);
                     } else {
-                        crearPerfilInicial(userId);
+                        alert("No se encontró el perfil del usuario.");
                     }
                 })
                 .catch((error) => {
                     alert('Error al cargar datos del perfil');
                 });
-        }
-
-        function crearPerfilInicial(userId) {
-            const perfilInicial = {
-                email: currentUser.email,
-                fechaCreacion: firebase.firestore.FieldValue.serverTimestamp(),
-                perfilCompleto: false
-            };
-            db.collection('usuarios').doc(userId).set(perfilInicial)
-                .then(() => {
-                    userProfile = perfilInicial;
-                    verificarCompletitudPerfil();
-                })
-                .catch((error) => {
-                    alert('Error al crear perfil inicial');
-                });
-        }
-
-        function verificarCompletitudPerfil() {
-            if (!userProfile) {
-                perfilCompleto = false;
-                return;
-            }
-            const camposRequeridos = [
-                'nombre', 'dni', 'numeroSuministro', 'numeroMedidor',
-                'direccionSuministro', 'titularSuministro', 'categoriaServicio'
-            ];
-            perfilCompleto = camposRequeridos.every(campo =>
-                userProfile[campo] && userProfile[campo].trim() !== ''
-            );
-            actualizarInterfazSegunPerfil();
-        }
-
-        function actualizarInterfazSegunPerfil() {
-            const alertaPerfil = document.getElementById('alertaPerfilIncompleto');
-            const cardFacturas = document.getElementById('cardFacturas');
-            const cardReclamos = document.getElementById('cardReclamos');
-            const navFacturas = document.getElementById('navFacturas');
-            const navReclamos = document.getElementById('navReclamos');
-            const infoFacturas = document.getElementById('infoFacturas');
-            const infoReclamos = document.getElementById('infoReclamos');
-            const contenedorFacturas = document.getElementById('contenedorFacturas');
-            const contenedorReclamos = document.getElementById('contenedorReclamos');
-
-            if (!perfilCompleto) {
-                alertaPerfil.style.display = 'block';
-                cardFacturas.classList.add('disabled-section');
-                cardReclamos.classList.add('disabled-section');
-                navFacturas.classList.add('disabled');
-                navReclamos.classList.add('disabled');
-                infoFacturas.style.display = 'block';
-                infoReclamos.style.display = 'block';
-                contenedorFacturas.style.display = 'none';
-                contenedorReclamos.style.display = 'none';
-            } else {
-                alertaPerfil.style.display = 'none';
-                cardFacturas.classList.remove('disabled-section');
-                cardReclamos.classList.remove('disabled-section');
-                navFacturas.classList.remove('disabled');
-                navReclamos.classList.remove('disabled');
-                infoFacturas.style.display = 'none';
-                infoReclamos.style.display = 'none';
-                contenedorFacturas.style.display = 'block';
-                contenedorReclamos.style.display = 'block';
-            }
-        }
-
-        function cargarDatosEnFormulario() {
-            if (!userProfile) return;
-            document.getElementById('email').value = currentUser.email;
-            const campos = ['nombre', 'telefono', 'dni', 'numeroSuministro',
-                'numeroMedidor', 'direccionSuministro', 'titularSuministro', 'categoriaServicio'];
-            campos.forEach(campo => {
-                const elemento = document.getElementById(campo);
-                if (elemento && userProfile[campo]) {
-                    elemento.value = userProfile[campo];
-                }
-            });
-        }
-
-        document.getElementById('formPerfil').addEventListener('submit', function(e) {
-            e.preventDefault();
-            guardarPerfil();
-        });
-
-        function guardarPerfil() {
-            const btnGuardar = document.getElementById('btnGuardarPerfil');
-            btnGuardar.disabled = true;
-            btnGuardar.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>Guardando...';
-            const datosFormulario = {
-                nombre: document.getElementById('nombre').value,
-                telefono: document.getElementById('telefono').value,
-                dni: document.getElementById('dni').value,
-                numeroSuministro: document.getElementById('numeroSuministro').value,
-                numeroMedidor: document.getElementById('numeroMedidor').value,
-                direccionSuministro: document.getElementById('direccionSuministro').value,
-                titularSuministro: document.getElementById('titularSuministro').value,
-                categoriaServicio: document.getElementById('categoriaServicio').value,
-            };
-            db.collection('usuarios').doc(currentUser.uid).update(datosFormulario)
-                .then(() => {
-                    userProfile = Object.assign({}, userProfile, datosFormulario);
-                    verificarCompletitudPerfil();
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
-                    mostrarMensajePerfilGuardado();
-                    cargarDatosEnFormulario();
-                })
-                .catch((error) => {
-                    alert('Error al guardar datos del perfil');
-                    btnGuardar.disabled = false;
-                    btnGuardar.innerHTML = '<i class="bi bi-check-circle me-1"></i>Guardar Perfil';
-                });
-        }
-
-        function mostrarMensajePerfilGuardado() {
-            const mensaje = document.getElementById('mensajePerfilGuardado');
-            if (mensaje) {
-                mensaje.classList.remove('d-none');
-                setTimeout(() => { mensaje.classList.add('d-none'); }, 4000);
-            }
         }
 
         function mostrarSeccion(seccionId) {
@@ -640,48 +180,10 @@
             if (seccion) seccion.style.display = 'block';
         }
 
-        // Facturas y Reclamos - Ejemplo de carga vacía (puedes personalizar)
-        function cargarDatosFacturacion() {
-            const contenedor = document.getElementById('contenedorFacturas');
-            contenedor.innerHTML = `
-                <div class="alert alert-success">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Aquí aparecerán tus facturas cuando el sistema esté conectado con la base de datos.
-                </div>
-            `;
-        }
-        function cargarDatosReclamos() {
-            const contenedor = document.getElementById('contenedorReclamos');
-            contenedor.innerHTML = `
-                <div class="alert alert-success">
-                    <i class="bi bi-check-circle me-2"></i>
-                    Aquí aparecerán tus reclamos cuando el sistema esté conectado con la base de datos.
-                </div>
-            `;
-        }
-
-        // Navegación
         document.getElementById('navDashboard').addEventListener('click', () => mostrarSeccion('dashboard'));
+        document.getElementById('navFacturas').addEventListener('click', () => mostrarSeccion('facturas'));
         document.getElementById('navPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
-        document.getElementById('navFacturas').addEventListener('click', () => {
-            if(perfilCompleto) mostrarSeccion('facturas');
-        });
-        document.getElementById('navReclamos').addEventListener('click', () => {
-            if(perfilCompleto) mostrarSeccion('reclamos');
-        });
-        document.getElementById('btnIrPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
-        document.getElementById('btnVerPerfil').addEventListener('click', () => mostrarSeccion('perfil'));
-        document.getElementById('btnVerFacturas').addEventListener('click', () => {
-            if(perfilCompleto) mostrarSeccion('facturas');
-        });
-        document.getElementById('btnVerReclamos').addEventListener('click', () => {
-            if(perfilCompleto) mostrarSeccion('reclamos');
-        });
-        document.getElementById('btnVolverDashboard').addEventListener('click', () => mostrarSeccion('dashboard'));
-        document.getElementById('btnVolverDashboardFacturas').addEventListener('click', () => mostrarSeccion('dashboard'));
-        document.getElementById('btnVolverDashboardReclamos').addEventListener('click', () => mostrarSeccion('dashboard'));
-
-        // Logout
+        document.getElementById('navReclamos').addEventListener('click', () => mostrarSeccion('reclamos'));
         document.getElementById('btnLogout').addEventListener('click', function() {
             auth.signOut().then(() => {
                 window.location.href = "index.html";
@@ -689,9 +191,87 @@
                 alert('No se pudo cerrar sesión. Intente nuevamente.');
             });
         });
-
-        // Ir a inicio desde logo
         window.irAInicio = function() { mostrarSeccion('dashboard'); };
+
+        // === Leer datos de Google Sheets ===
+
+        // Utilidad para convertir CSV a array de objetos
+        function parseCSV(text, delimiter = ';') {
+            const lines = text.trim().split('\n');
+            const headers = lines[0].split(delimiter).map(h => h.trim());
+            return lines.slice(1).map(line => {
+                const values = line.split(delimiter).map(v => v.trim());
+                return headers.reduce((obj, h, i) => { obj[h] = values[i] || ''; return obj; }, {});
+            });
+        }
+
+        // Leer facturas de Google Sheets
+        function cargarMisFacturas(numeroSuministro) {
+            // Link CSV export de la hoja de facturación (Hoja 03-2025)
+            // OJO: Si la hoja cambia de nombre, actualiza el &sheet=03-2025
+            const SHEET_FACTURAS_URL = "https://docs.google.com/spreadsheets/d/11aj5qSGy06wOCPkKFXUPdi4akoLWYNlgCFjZYJ3D-2Y/gviz/tq?tqx=out:csv&sheet=03-2025";
+            fetch(SHEET_FACTURAS_URL)
+                .then(res => res.text())
+                .then(csvText => {
+                    const facturas = parseCSV(csvText);
+                    // Filtrar por número de suministro
+                    const mias = facturas.filter(f => f['Usuario'] && f['Usuario'].trim() === numeroSuministro);
+                    let html = `<table class="table"><thead>
+                        <tr><th>Periodo</th><th>Vencimiento</th><th>Importe</th><th>PDF</th></tr>
+                    </thead><tbody>`;
+                    mias.forEach(f => {
+                        // El nombre de archivo está en la columna "archivo"
+                        // Si tienes el fileID en esa columna (por ejemplo: 1vRr...xyz), arma el link así:
+                        // let pdfLink = `https://drive.google.com/file/d/${f['archivo']}/view?usp=sharing`;
+
+                        // Si solo tienes el nombre (ej: 20250709-96-0003-00037689-00001.pdf), arma el link así:
+                        // let pdfLink = `https://drive.google.com/drive/u/3/folders/1NKtdt1GlPYQwe-XKYdqPp3jF9dSloPWA`; // solo la carpeta
+                        // Pero para el link directo, lo mejor es tener el fileID en la hoja
+
+                        // Si tienes el nombre, busca el PDF manualmente en la carpeta compartida para cada usuario, o puedes mostrar el nombre para que lo busque.
+                        let pdfLink = f['archivo'] ? `https://drive.google.com/drive/u/3/folders/1NKtdt1GlPYQwe-XKYdqPp3jF9dSloPWA` : '#';
+                        html += `<tr>
+                            <td>${f.Periodo}</td>
+                            <td>${f.Vencimiento}</td>
+                            <td>$${parseFloat(f.Importe).toLocaleString("es-AR")}</td>
+                            <td>${f['archivo'] ? `<span>${f['archivo']}</span>` : 'No disponible'}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>`;
+                    document.getElementById('tablaFacturas').innerHTML = html;
+                })
+                .catch(() => {
+                    document.getElementById('tablaFacturas').innerHTML = '<div class="alert alert-danger">No se pudieron cargar las facturas.</div>';
+                });
+        }
+
+        // Leer comprobantes impagos de Google Sheets
+        function cargarMisImpagos(numeroSuministro) {
+            // Link CSV export de la hoja de impagos (Hoja 03-2025)
+            const SHEET_IMPAGOS_URL = "https://docs.google.com/spreadsheets/d/1m7GnmOaARUHDZbn5gGPCUV3mfqElYPl0WcnZsQj6l8I/gviz/tq?tqx=out:csv&sheet=03-2025";
+            fetch(SHEET_IMPAGOS_URL)
+                .then(res => res.text())
+                .then(csvText => {
+                    const impagos = parseCSV(csvText);
+                    // Filtrar por número de suministro
+                    const mios = impagos.filter(f => f['Usuario'] && f['Usuario'].trim() === numeroSuministro);
+                    let html = `<table class="table"><thead>
+                        <tr><th>Fecha Emisión</th><th>Comprobante</th><th>Importe</th></tr>
+                    </thead><tbody>`;
+                    mios.forEach(f => {
+                        html += `<tr>
+                            <td>${f['Fecha emision']}</td>
+                            <td>${f.Comprobante}</td>
+                            <td>$${parseFloat(f.Importe).toLocaleString("es-AR")}</td>
+                        </tr>`;
+                    });
+                    html += `</tbody></table>`;
+                    document.getElementById('tablaImpagos').innerHTML = html;
+                })
+                .catch(() => {
+                    document.getElementById('tablaImpagos').innerHTML = '<div class="alert alert-danger">No se pudieron cargar los comprobantes impagos.</div>';
+                });
+        }
     </script>
 </body>
 </html>
