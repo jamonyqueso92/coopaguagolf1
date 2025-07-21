@@ -8,30 +8,57 @@
     <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p>Verificando autenticación...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">Cooperativa Agua Golf</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="bi bi-droplet-fill me-2"></i>
+                Cooperativa Agua Golf
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.html">Inicio</a>
+                        <a class="nav-link active" href="dashboard.html" id="navDashboard">
+                            <i class="bi bi-house-fill me-1"></i>Inicio
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="facturas.html">Facturas</a>
+                        <a class="nav-link" href="facturas.html" id="navFacturas">
+                            <i class="bi bi-receipt me-1"></i>Facturas
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="reclamos.html">Reclamos</a>
+                        <a class="nav-link" href="reclamos.html" id="navReclamos">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Reclamos
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="perfil.html">Mi Perfil</a>
+                        <a class="nav-link" href="perfil.html" id="navPerfil">
+                            <i class="bi bi-person-circle me-1"></i>Mi Perfil
+                        </a>
                     </li>
                 </ul>
-                <div class="d-flex">
-                    <span class="navbar-text me-3" id="userDisplayName">Usuario</span>
-                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">Cerrar Sesión</button>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3">
+                        <i class="bi bi-person-fill me-1"></i>
+                        <span id="userDisplayName">Cargando...</span>
+                    </span>
+                    <button id="btnLogout" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </div>
