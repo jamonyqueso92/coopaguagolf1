@@ -119,12 +119,12 @@
 
         function logout() {
             localStorage.removeItem('usuarioActivo');
-            window.location.href = '/login.html';
+            window.location.href = '/login-con-firebase.html';
         }
 
         window.onload = function() {
             if (!isLoggedIn()) {
-                window.location.href = '/login.html';
+                window.location.href = '/login-con-firebase.html';
             }
         }
 
