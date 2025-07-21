@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facturas - Oficina Virtual</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/styles.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar-brand { font-weight: 600; }
+        .alert-warning { border-left: 4px solid #ffc107; }
+        .table th { background-color: #f8f9fa; font-weight: 600; }
+        .icon-large { font-size: 3rem; }
+    </style>
 </head>
 <body>
-
-    <!-- Navigation -->
+    <!-- Navigation igual que dashboard -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="dashboard.html">
@@ -22,12 +29,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="dashboard.html" id="navDashboard">
+                        <a class="nav-link" href="dashboard.html" id="navDashboard">
                             <i class="bi bi-house-fill me-1"></i>Inicio
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="facturas.html" id="navFacturas">
+                        <a class="nav-link active" href="facturas.html" id="navFacturas">
                             <i class="bi bi-receipt me-1"></i>Facturas
                         </a>
                     </li>
@@ -47,7 +54,7 @@
                         <i class="bi bi-person-fill me-1"></i>
                         <span id="userDisplayName">Cargando...</span>
                     </span>
-                    <button id="btnLogout" class="btn btn-outline-light btn-sm">
+                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">
                         <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
                     </button>
                 </div>
@@ -62,9 +69,6 @@
                 <label for="filtroAnio" class="me-2">Filtrar por año:</label>
                 <select id="filtroAnio" class="form-select">
                     <option value="todos">Todos</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
                 </select>
             </div>
         </div>
@@ -121,236 +125,179 @@
         </div>
     </main>
 
-    <footer class="bg-light text-center py-3 mt-auto">
-        <p>&copy; 2025 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+    <footer class="bg-light text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0 text-muted">&copy; 2025 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+            <small class="text-muted">Sierra de la Ventana - Buenos Aires, Argentina</small>
+        </div>
     </footer>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK para autenticación -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    
-    <!-- Configuración Firebase -->
-    <script src="../firebase-config.js"></script>
-    
-    <script>
-        // Verificar autenticación
-        let currentUser;
-        
-        firebase.auth().onAuthStateChanged((user) => {
-            if (user) {
-                // Usuario autenticado
-                currentUser = user;
-                document.getElementById('userDisplayName').textContent = user.email;
-                
-                // Cargar facturas
-                cargarFacturas('todos');
-            } else {
-                // No hay usuario autenticado, redirigir al login
-                window.location.href = 'login.html';
-            }
-        });
-        
-        // Cerrar sesión
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            firebase.auth().signOut()
-                .then(() => {
-                    window.location.href = '../index.html';
-                })
-                .catch((error) => {
-                    console.error('Error al cerrar sesión:', error);
-                });
-        });
-        
-        // Filtrar facturas por año
-        document.getElementById('filtroAnio').addEventListener('change', function() {
-            const anioSeleccionado = this.value;
-            cargarFacturas(anioSeleccionado);
-        });
-        
-        // Cargar facturas desde Firestore
-        function cargarFacturas(anio) {
-            const tablaFacturas = document.getElementById('tablaFacturas');
-            const sinFacturas = document.getElementById('sinFacturas');
-            
-            tablaFacturas.innerHTML = '<tr><td colspan="7" class="text-center">Cargando facturas...</td></tr>';
-            sinFacturas.classList.add('d-none');
-            
-            let query = db.collection('facturas').where('usuarioId', '==', currentUser.uid);
-            
-            // Aplicar filtro por año si es necesario
-            if (anio !== 'todos') {
-                // Fecha inicio y fin del año seleccionado
-                      const fechaInicio = new Date(`${anio}-01-01`);
-                      const fechaFin = new Date(`${anio}-12-31`);
-                    
-                    query = query.where('fechaEmision', '>=', fechaInicio)
-                              .where('fechaEmision', '<=', fechaFin);
-                }
-                
-                query.orderBy('fechaEmision', 'desc')
-                    .get()
-                    .then((querySnapshot) => {
-                        if (querySnapshot.empty) {
-                            tablaFacturas.innerHTML = '';
-                            sinFacturas.classList.remove('d-none');
-                            return;
-                        }
-                        
-                        sinFacturas.classList.add('d-none');
-                        tablaFacturas.innerHTML = '';
-                        
-                        querySnapshot.forEach((doc) => {
-                            const factura = doc.data();
-                            const fechaEmision = new Date(factura.fechaEmision.seconds * 1000).toLocaleDateString();
-                            const fechaVencimiento = new Date(factura.fechaVencimiento.seconds * 1000).toLocaleDateString();
-                            
-                            const fila = document.createElement('tr');
-                            
-                            // Estado y clase CSS según el estado
-                            let estadoTexto = factura.estado;
-                            let estadoClase = '';
-                            let accionesHTML = '';
-                            
-                            switch(factura.estado) {
-                                case 'pendiente':
-                                    estadoTexto = 'Pendiente';
-                                    estadoClase = 'text-danger';
-                                    accionesHTML = `
-                                        <button class="btn btn-success btn-sm" onclick="pagarFactura('${doc.id}')">Pagar</button>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalle('${doc.id}')">Ver</button>
-                                    `;
-                                    break;
-                                case 'pagado':
-                                    estadoTexto = 'Pagado';
-                                    estadoClase = 'text-success';
-                                    accionesHTML = `
-                                        <button class="btn btn-info btn-sm" onclick="verDetalle('${doc.id}')">Ver</button>
-                                    `;
-                                    break;
-                                case 'vencido':
-                                    estadoTexto = 'Vencido';
-                                    estadoClase = 'text-warning';
-                                    accionesHTML = `
-                                        <button class="btn btn-danger btn-sm" onclick="pagarFactura('${doc.id}')">Pagar con Recargo</button>
-                                        <button class="btn btn-info btn-sm" onclick="verDetalle('${doc.id}')">Ver</button>
-                                    `;
-                                    break;
-                            }
-                            
-                            fila.innerHTML = `
-                                <td>${factura.numero}</td>
-                                <td>${factura.periodo}</td>
-                                <td>${fechaEmision}</td>
-                                <td>${fechaVencimiento}</td>
-                                <td>$${factura.monto.toLocaleString('es-AR')}</td>
-                                <td class="${estadoClase}">${estadoTexto}</td>
-                                <td>${accionesHTML}</td>
-                            `;
-                            
-                            tablaFacturas.appendChild(fila);
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('Error al cargar facturas:', error);
-                        tablaFacturas.innerHTML = `
-                            <tr>
-                                <td colspan="7" class="text-center text-danger">
-                                    Error al cargar las facturas. Intente nuevamente.
-                                </td>
-                            </tr>
-                        `;
-                    });
-            }
-            
-            // Ver detalle de factura
-            function verDetalle(facturaId) {
-                const detalleFacturaBody = document.getElementById('detalleFacturaBody');
-                
-                // Mostrar modal
-                const detalleModal = new bootstrap.Modal(document.getElementById('detalleFacturaModal'));
-                detalleModal.show();
-                
-                // Cargar datos de la factura
-                db.collection('facturas').doc(facturaId).get()
-                    .then((doc) => {
-                        if (doc.exists) {
-                            const factura = doc.data();
-                            const fechaEmision = new Date(factura.fechaEmision.seconds * 1000).toLocaleDateString();
-                            const fechaVencimiento = new Date(factura.fechaVencimiento.seconds * 1000).toLocaleDateString();
-                            
-                            detalleFacturaBody.innerHTML = `
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <h5>Datos de la Factura</h5>
-                                        <p><strong>Número:</strong> ${factura.numero}</p>
-                                        <p><strong>Período:</strong> ${factura.periodo}</p>
-                                        <p><strong>Emisión:</strong> ${fechaEmision}</p>
-                                        <p><strong>Vencimiento:</strong> ${fechaVencimiento}</p>
-                                        <p><strong>Estado:</strong> ${factura.estado}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5>Detalle de Consumo</h5>
-                                        <p><strong>Consumo:</strong> ${factura.consumo} m³</p>
-                                        <p><strong>Cargo Fijo:</strong> $${factura.cargoFijo.toLocaleString('es-AR')}</p>
-                                        <p><strong>Cargo Variable:</strong> $${factura.cargoVariable.toLocaleString('es-AR')}</p>
-                                        <p><strong>Otros Cargos:</strong> $${factura.otrosCargos.toLocaleString('es-AR')}</p>
-                                        <p><strong>Total:</strong> $${factura.monto.toLocaleString('es-AR')}</p>
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            detalleFacturaBody.innerHTML = `
-                                <div class="alert alert-danger">
-                                    No se encontró la factura solicitada.
-                                </div>
-                            `;
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Error al obtener detalles de la factura:', error);
-                        detalleFacturaBody.innerHTML = `
-                            <div class="alert alert-danger">
-                                Error al cargar los detalles. Intente nuevamente.
-                            </div>
-                        `;
-                    });
-            }
-            
-            // Pagar factura
-            function pagarFactura(facturaId) {
-                // Aquí se implementaría la redirección al sistema de pagos
-                // Por ahora, solo simulamos un pago exitoso después de 2 segundos
-                alert('Redirigiendo al sistema de pagos...');
-                
-                // En una implementación real, esto sería manejado por un webhook del sistema de pagos
-                setTimeout(() => {
-                    db.collection('facturas').doc(facturaId).update({
-                        estado: 'pagado',
-                        fechaPago: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(() => {
-                        alert('Pago procesado correctamente');
-                        // Recargar facturas
-                        const anioSeleccionado = document.getElementById('filtroAnio').value;
-                        cargarFacturas(anioSeleccionado);
-                    })
-                    .catch((error) => {
-                        console.error('Error al procesar el pago:', error);
-                        alert('Error al procesar el pago. Intente nuevamente.');
-                    });
-                }, 2000);
-            }
-            
-            // Exponer funciones al ámbito global para los onclick
-            window.verDetalle = verDetalle;
-            window.pagarFactura = pagarFactura;
-        }
-    </script>
-    
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Bootstrap JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Configuración de Firebase (igual que dashboard)
+        const firebaseConfig = {
+            apiKey: "AIzaSyA3EwtirsHI_kwxMLH5SP2rXbm3vCYpqhg",
+            authDomain: "coopaguagolf-b1e2f.firebaseapp.com",
+            projectId: "coopaguagolf-b1e2f",
+            storageBucket: "coopaguagolf-b1e2f.appspot.com",
+            messagingSenderId: "980063915524",
+            appId: "1:980063915524:web:e991b552b607d2447aef51",
+            measurementId: "G-V6Z34N9V06"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        let currentUser = null;
+
+        // Autenticación y navbar usuario
+        document.addEventListener('DOMContentLoaded', function() {
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('userDisplayName').textContent = user.displayName || user.email || 'Usuario';
+                    cargarFacturasCSV();
+                } else {
+                    // Redirigir si no está autenticado
+                    document.body.innerHTML = `
+                        <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
+                            <div class="text-center">
+                                <div class="alert alert-warning p-4">
+                                    <i class="bi bi-exclamation-triangle display-4 text-warning mb-3"></i>
+                                    <h3>Acceso Restringido</h3>
+                                    <p class="mb-3">Necesitas iniciar sesión para acceder a las facturas.</p>
+                                    <a href="index.html" class="btn btn-primary">
+                                        <i class="bi bi-arrow-left me-1"></i>Volver al Inicio
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            auth.signOut().then(() => {
+                window.location.href = "index.html";
+            }).catch(() => {
+                alert('No se pudo cerrar sesión. Intente nuevamente.');
+            });
+        });
+
+        // ===============================
+        // CARGA DE FACTURAS DESDE CSV
+        // ===============================
+        // Cambia esta URL por la de tu archivo real si es necesario:
+        const CSV_URL = 'https://raw.githubusercontent.com/<TU_USUARIO>/<TU_REPO>/main/liquidacion/facturas.csv';
+
+        // Función para parsear CSV a objetos JS
+        function parseCSV(data) {
+            const lines = data.split('\n').filter(l => l.trim().length > 0);
+            const headers = lines[0].split(',').map(h => h.trim());
+            return lines.slice(1).map(line => {
+                const values = line.split(',').map(v => v.trim());
+                const obj = {};
+                headers.forEach((h, i) => { obj[h] = values[i] ?? ''; });
+                return obj;
+            });
+        }
+
+        // Cargar y mostrar facturas desde CSV
+        function cargarFacturasCSV() {
+            fetch(CSV_URL)
+                .then(response => {
+                    if (!response.ok) throw new Error('No se pudo cargar el archivo de facturas.');
+                    return response.text();
+                })
+                .then(csvText => {
+                    const facturas = parseCSV(csvText)
+                        // Filtrar por usuario (si el CSV tiene columna usuarioId)
+                        .filter(f => !f.usuarioId || f.usuarioId === currentUser.uid);
+
+                    // Obtener años únicos para el filtro
+                    const anios = [...new Set(facturas.map(f => f.Período?.split('-')[0] || '').filter(a => a))];
+                    const filtroAnio = document.getElementById('filtroAnio');
+                    filtroAnio.innerHTML = '<option value="todos">Todos</option>' + anios.map(a => `<option value="${a}">${a}</option>`).join('');
+                    
+                    // Evento cambio de filtro
+                    filtroAnio.onchange = function() {
+                        mostrarFacturas(facturas, this.value);
+                    };
+
+                    mostrarFacturas(facturas, filtroAnio.value);
+                })
+                .catch(err => {
+                    document.getElementById('tablaFacturas').innerHTML =
+                        `<tr><td colspan="7" class="text-center text-danger">Error al cargar facturas</td></tr>`;
+                });
+        }
+
+        // Mostrar facturas en tabla según filtro año
+        function mostrarFacturas(facturas, anio) {
+            const tabla = document.getElementById('tablaFacturas');
+            let filtradas = facturas;
+            if (anio !== 'todos') {
+                filtradas = facturas.filter(f => (f.Período && f.Período.startsWith(anio)));
+            }
+            if (!filtradas.length) {
+                tabla.innerHTML = `<tr><td colspan="7" class="text-center">No se encontraron facturas.</td></tr>`;
+                document.getElementById('sinFacturas').classList.remove('d-none');
+                return;
+            } else {
+                document.getElementById('sinFacturas').classList.add('d-none');
+            }
+            tabla.innerHTML = filtradas.map((f, idx) => `
+                <tr>
+                    <td>${f.Número || ''}</td>
+                    <td>${f.Período || ''}</td>
+                    <td>${f.Emisión || ''}</td>
+                    <td>${f.Vencimiento || ''}</td>
+                    <td>${f.Monto || ''}</td>
+                    <td>${f.Estado || ''}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="verDetalleFactura(${idx})">
+                            <i class="bi bi-eye"></i> Ver
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Guardar facturas para detalle
+            window._facturas = filtradas;
+        }
+
+        // Detalle factura modal
+        window.verDetalleFactura = function(index) {
+            const factura = window._facturas[index];
+            const body = document.getElementById('detalleFacturaBody');
+            body.innerHTML = `
+                <ul class="list-group mb-3">
+                    <li class="list-group-item"><b>Número:</b> ${factura.Número || ''}</li>
+                    <li class="list-group-item"><b>Período:</b> ${factura.Período || ''}</li>
+                    <li class="list-group-item"><b>Emisión:</b> ${factura.Emisión || ''}</li>
+                    <li class="list-group-item"><b>Vencimiento:</b> ${factura.Vencimiento || ''}</li>
+                    <li class="list-group-item"><b>Monto:</b> ${factura.Monto || ''}</li>
+                    <li class="list-group-item"><b>Estado:</b> ${factura.Estado || ''}</li>
+                    <li class="list-group-item"><b>Detalle:</b> ${factura.Detalle || ''}</li>
+                </ul>
+            `;
+            // Si tienes PDF en el CSV, puedes usarlo aquí para el botón de descarga
+            document.getElementById('btnDescargarFactura').onclick = function() {
+                if (factura.PDF) {
+                    window.open(factura.PDF, '_blank');
+                } else {
+                    alert('No hay PDF disponible para esta factura.');
+                }
+            };
+            const modal = new bootstrap.Modal(document.getElementById('detalleFacturaModal'));
+            modal.show();
+        };
+    </script>
 </body>
 </html>
