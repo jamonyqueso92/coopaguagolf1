@@ -7,16 +7,51 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header común (igual que dashboard) -->
-    <header>
-        <h1>CoopaguaGolf - Dashboard</h1>
-        <nav>
-            <button onclick="goTo('dashboard.html')">Facturas</button>
-            <button onclick="goTo('reclamos.html')">Reclamos</button>
-            <button onclick="goTo('perfil.html')">Perfil</button>
-            <button onclick="logout()">Salir</button>
-        </nav>
-    </header>
+    <!-- Header igual que dashboard -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="bi bi-droplet-fill me-2"></i>
+                Cooperativa Agua Golf
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html" id="navDashboard">
+                            <i class="bi bi-house-fill me-1"></i>Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="facturas.html" id="navFacturas">
+                            <i class="bi bi-receipt me-1"></i>Facturas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="reclamos.html" id="navReclamos">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Reclamos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="perfil.html" id="navPerfil">
+                            <i class="bi bi-person-circle me-1"></i>Mi Perfil
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3">
+                        <i class="bi bi-person-fill me-1"></i>
+                        <span id="userDisplayName">Cargando...</span>
+                    </span>
+                    <button id="logoutBtn" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <main class="container my-4">
         <div class="row">
