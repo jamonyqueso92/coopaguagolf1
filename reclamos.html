@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reclamos - CoopaguaGolf</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header común -->
+    <!-- Header común (igual que dashboard) -->
     <header>
         <h1>CoopaguaGolf - Dashboard</h1>
         <nav>
-            <button onclick="navigateTab('dashboard.html')">Facturas</button>
-            <button onclick="navigateTab('reclamos.html')">Reclamos</button>
-            <button onclick="navigateTab('perfil.html')">Perfil</button>
+            <button onclick="goTo('dashboard.html')">Facturas</button>
+            <button onclick="goTo('reclamos.html')">Reclamos</button>
+            <button onclick="goTo('perfil.html')">Perfil</button>
             <button onclick="logout()">Salir</button>
         </nav>
     </header>
@@ -27,7 +26,7 @@
                         <h3 class="card-title m-0">Crear Nuevo Reclamo</h3>
                     </div>
                     <div class="card-body">
-                        <form id="reclamoForm" enctype="multipart/form-data">
+                        <form id="reclamoForm">
                             <div class="mb-3">
                                 <label for="tipoReclamo" class="form-label">Tipo de Reclamo</label>
                                 <select class="form-select" id="tipoReclamo" required>
@@ -64,19 +63,24 @@
                             </div>
                             <button type="submit" class="btn btn-primary">Enviar Reclamo</button>
                         </form>
-                        <div id="mensajeEnviado" class="alert alert-success mt-3 d-none">¡Reclamo enviado! Nos contactaremos a la brevedad.</div>
-                        <div id="mensajeError" class="alert alert-danger mt-3 d-none">Error al enviar el reclamo. Intente nuevamente.</div>
                     </div>
                 </div>
             </div>
             
             <div class="col-md-4">
+                <!-- Emergencias solo Whatsapp -->
                 <div class="card mb-4">
-                    <div class="card-header bg-success text-white">
-                        <h3 class="card-title m-0">Contacto Urgente</h3>
+                    <div class="card-header bg-danger text-white">
+                        <h3 class="card-title m-0">Emergencias</h3>
                     </div>
                     <div class="card-body">
-                        <p>Para situaciones urgentes, comuníquese por WhatsApp:</p>
+                        <p>Para situaciones que requieran atención inmediata como:</p>
+                        <ul>
+                            <li>Roturas principales</li>
+                            <li>Inundaciones</li>
+                            <li>Falta de agua en todo el barrio</li>
+                        </ul>
+                        <hr>
                         <div class="d-grid gap-2">
                             <a href="https://wa.me/549123456789" class="btn btn-success" target="_blank">
                                 <i class="bi bi-whatsapp"></i> WhatsApp Urgente
@@ -91,7 +95,7 @@
                     </div>
                     <div class="card-body p-0">
                         <ul class="list-group list-group-flush" id="misReclamos">
-                            <li class="list-group-item text-center">Funcionalidad disponible pronto</li>
+                            <li class="list-group-item text-center">No disponible en esta versión.</li>
                         </ul>
                     </div>
                 </div>
@@ -104,29 +108,27 @@
     </footer>
 
     <script>
-        // Simulación de sesión activa
+        // --------- Header navigation/session ----------
+        function goTo(page) {
+            window.location.href = page;
+        }
+
         function isLoggedIn() {
-            // Aquí deberías verificar la sesión real (por ejemplo, usando una cookie o localStorage)
             return localStorage.getItem('usuarioActivo');
         }
 
         function logout() {
             localStorage.removeItem('usuarioActivo');
-            window.location.href = '/login.html'; // Redirige al login
+            window.location.href = '/login.html';
         }
 
-        function navigateTab(url) {
-            window.location.href = url;
-        }
-
-        // Al cargar, verifica sesión
         window.onload = function() {
             if (!isLoggedIn()) {
                 window.location.href = '/login.html';
             }
-        };
+        }
 
-        // Enviar formulario por mail usando mailto (puedes mejorar esto con backend más adelante)
+        // --------- Reclamo por mail ----------
         document.getElementById('reclamoForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -136,33 +138,33 @@
             const direccion = document.getElementById('direccion').value;
             const fotoInput = document.getElementById('fotoReclamo');
 
-            let tipoTexto = '';
-            switch(tipoReclamo) {
-                case 'falta_agua': tipoTexto = 'Falta de Agua'; break;
-                case 'baja_presion': tipoTexto = 'Baja Presión'; break;
-                case 'perdida': tipoTexto = 'Pérdida en la Vía Pública'; break;
-                case 'facturacion': tipoTexto = 'Problemas de Facturación'; break;
-                case 'medidor': tipoTexto = 'Problemas con el Medidor'; break;
-                case 'otro': tipoTexto = 'Otro'; break;
+            let asunto = "RECLAMO - ";
+            switch (tipoReclamo) {
+                case "falta_agua": asunto += "falta de agua"; break;
+                case "baja_presion": asunto += "baja presión"; break;
+                case "perdida": asunto += "pérdida en vía pública"; break;
+                case "facturacion": asunto += "problemas de facturación"; break;
+                case "medidor": asunto += "problemas con el medidor"; break;
+                default: asunto += "otro"; break;
             }
 
-            const asunto = `RECLAMO - ${tipoTexto}`;
-            let cuerpo = `Tipo de Reclamo: ${tipoTexto}\nNivel de Urgencia: ${urgencia}\nDirección: ${direccion}\nDescripción: ${descripcion}\n`;
+            let cuerpo =
+                `Tipo de reclamo: ${document.getElementById('tipoReclamo').options[document.getElementById('tipoReclamo').selectedIndex].text}\n` +
+                `Nivel de urgencia: ${document.getElementById('urgencia').options[document.getElementById('urgencia').selectedIndex].text}\n` +
+                `Descripción: ${descripcion}\n` +
+                `Dirección: ${direccion}\n`;
 
-            // Si hay imagen, se recomienda adjuntarla manualmente
+            // Si hay una foto, indicamos que debe adjuntarse manualmente
             if (fotoInput.files.length > 0) {
-                cuerpo += '\n(Adjuntar imagen desde el correo)';
+                cuerpo += "\n*Adjuntar imagen al correo*";
             }
 
-            // mailto: no permite adjuntos, pero puedes abrir el correo al usuario para que lo complete
-            const mailtoLink = `mailto:coopaguagol@gmail.com?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+            // Usar mailto para abrir cliente de correo
+            const mailto = `mailto:coopaguagol@gmail.com?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(cuerpo)}`;
+            window.location.href = mailto;
 
-            window.location.href = mailtoLink;
-
-            document.getElementById('mensajeEnviado').classList.remove('d-none');
-            setTimeout(() => {
-                document.getElementById('mensajeEnviado').classList.add('d-none');
-            }, 6000);
+            // Resetear el formulario
+            document.getElementById('reclamoForm').reset();
         });
     </script>
 </body>
