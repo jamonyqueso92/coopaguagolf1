@@ -104,7 +104,7 @@
     </main>
 
     <footer class="bg-light text-center py-3 mt-auto">
-        <p>&copy; 2024 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
+        <p>&copy; 2025 Cooperativa de Provisión de Servicios y Agua Potable del Barrio Parque Golf</p>
     </footer>
 
     <script>
@@ -119,12 +119,12 @@
 
         function logout() {
             localStorage.removeItem('usuarioActivo');
-            window.location.href = '/login-con-firebase.html';
+            window.location.href = 'login-con-firebase.html';
         }
 
         window.onload = function() {
             if (!isLoggedIn()) {
-                window.location.href = '/login-con-firebase.html';
+                window.location.href = 'login-con-firebase.html';
             }
         }
 
