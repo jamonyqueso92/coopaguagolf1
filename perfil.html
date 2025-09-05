@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario - Oficina Virtual</title>
+    <title>Oficina Virtual</title>
     <!-- Estilos CSS -->
     <style>
         * { box-sizing: border-box; font-family: Arial, sans-serif; }
@@ -38,6 +38,21 @@
             box-shadow: 0 2px 8px rgba(26, 115, 232, 0.08);
         }
         .nav-item i { margin-right: 10px; font-size: 18px; }
+        .submenu {
+            display: none;
+            flex-direction: column;
+            margin-left: 20px;
+        }
+        .submenu .nav-item {
+            font-size: 14px;
+            padding: 8px 20px;
+        }
+        .submenu .nav-item:hover {
+            background-color: #f0f4ff;
+        }
+        .submenu.active {
+            display: flex;
+        }
         .back-button {
             display: flex; align-items: center; padding: 15px 20px;
             background-color: #f5f5f5; color: #555; text-decoration: none;
@@ -74,29 +89,6 @@
         .btn-danger { background-color: white; color: #e53935; border: 1px solid #e53935; }
         .btn-danger:hover { background-color: #ffebee; }
         .text-right { text-align: right; }
-        /* Tablas */
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; background-color: #f5f5f5; color: #666; font-size: 12px; text-transform: uppercase; border-bottom: 1px solid #e0e0e0; }
-        td { padding: 12px; border-bottom: 1px solid #e0e0e0; font-size: 14px; }
-        .badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
-        .badge-green { background-color: #e8f5e9; color: #2e7d32; }
-        .badge-blue { background-color: #e3f2fd; color: #1565c0; }
-        .badge-purple { background-color: #f3e5f5; color: #7b1fa2; }
-        .badge-yellow { background-color: #fff8e1; color: #f9a825; }
-        /* Switch para activar/desactivar */
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: #1a73e8; }
-        input:focus + .slider { box-shadow: 0 0 1px #1a73e8; }
-        input:checked + .slider:before { transform: translateX(26px); }
         /* Responsive */
         @media (max-width: 900px) {
             .container { flex-direction: column; }
@@ -121,258 +113,137 @@
         <!-- Barra lateral -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <h2>Mi Perfil</h2>
+                <h2>Mi Cuenta</h2>
             </div>
+
             <div class="nav-menu">
+                <!-- Arriba -->
                 <div class="nav-item active" data-section="personal" tabindex="0">
                     <i class="fas fa-user"></i>
-                    <span>Información Personal</span>
+                    <span>Mis Datos</span>
                 </div>
-                <div class="nav-item" data-section="security" tabindex="0">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Seguridad</span>
+                <div class="nav-item" data-section="supplies" tabindex="0">
+                    <i class="fas fa-plug"></i>
+                    <span>Mis Suministros</span>
                 </div>
-                <div class="nav-item" data-section="preferences" tabindex="0">
-                    <i class="fas fa-bell"></i>
-                    <span>Preferencias</span>
+
+                <!-- Sección Tramites -->
+                <div class="nav-item" tabindex="0" onclick="toggleSubmenu(this)">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Trámites</span>
+                    <i class="fas fa-chevron-down" style="margin-left:auto;"></i>
                 </div>
-                <div class="nav-item" data-section="activity" tabindex="0">
-                    <i class="fas fa-clock"></i>
-                    <span>Historial de Actividad</span>
-                </div>
-                <div class="nav-item" data-section="account" tabindex="0">
-                    <i class="fas fa-cog"></i>
-                    <span>Gestión de Cuenta</span>
+                <div class="submenu">
+                    <div class="nav-item" data-section="new-connection" tabindex="0">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Nueva conexión</span>
+                    </div>
+                    <div class="nav-item" data-section="ownership-change" tabindex="0">
+                        <i class="fas fa-user-edit"></i>
+                        <span>Cambio de titularidad</span>
+                    </div>
                 </div>
             </div>
+
             <!-- Botón de regreso al dashboard -->
             <a href="dashboard.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
                 <span>Volver al Dashboard</span>
             </a>
         </div>
+
         <!-- Contenido principal -->
         <div class="content">
-            <!-- Sección: Información Personal -->
+            <!-- Sección: Mis Datos -->
             <div class="section active" id="personal-section">
-                <h2 class="section-title">Información Personal</h2>
+                <h2 class="section-title">Mis Datos</h2>
                 <div class="card">
                     <form>
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="fullname">Nombre completo</label>
-                                    <input type="text" id="fullname" value="Juan Pérez">
-                                </div>
-                            </div>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="email">Correo electrónico</label>
-                                    <input type="email" id="email" value="juan.perez@ejemplo.com">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="phone">Número de teléfono</label>
-                                    <input type="tel" id="phone" value="+56 9 1234 5678">
-                                </div>
-                            </div>
-                            <div class="form-col">
-                                <div class="form-group">
-                                    <label for="birthdate">Fecha de nacimiento</label>
-                                    <input type="date" id="birthdate" value="1985-06-15">
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <label for="fullname">Nombre completo</label>
+                            <input type="text" id="fullname" value="Juan Pérez">
                         </div>
                         <div class="form-group">
-                            <label for="address">Dirección</label>
-                            <input type="text" id="address" value="Av. Libertador 1234, Santiago">
+                            <label for="email">Correo electrónico</label>
+                            <input type="email" id="email" value="juan.perez@ejemplo.com">
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sección: Mis Suministros -->
+            <div class="section" id="supplies-section">
+                <h2 class="section-title">Mis Suministros</h2>
+                <div class="card">
+                    <p>Aquí aparecerá la información de tus suministros activos.</p>
+                </div>
+            </div>
+
+            <!-- Sección: Nueva conexión -->
+            <div class="section" id="new-connection-section">
+                <h2 class="section-title">Trámite: Nueva conexión</h2>
+                <div class="card">
+                    <form>
+                        <div class="form-group">
+                            <label for="address">Dirección del suministro</label>
+                            <input type="text" id="address" placeholder="Ej: Av. Libertador 1234">
+                        </div>
+                        <div class="form-group">
+                            <label for="connection-type">Tipo de conexión</label>
+                            <select id="connection-type">
+                                <option>Residencial</option>
+                                <option>Comercial</option>
+                                <option>Industrial</option>
+                            </select>
                         </div>
                         <div class="text-right">
-                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                            <button type="submit" class="btn btn-primary">Solicitar</button>
                         </div>
                     </form>
                 </div>
             </div>
-            <!-- Sección: Seguridad -->
-            <div class="section" id="security-section">
-                <h2 class="section-title">Seguridad</h2>
+
+            <!-- Sección: Cambio de titularidad -->
+            <div class="section" id="ownership-change-section">
+                <h2 class="section-title">Trámite: Cambio de titularidad</h2>
                 <div class="card">
-                    <h3>Cambiar contraseña</h3>
                     <form>
                         <div class="form-group">
-                            <label for="current-password">Contraseña actual</label>
-                            <input type="password" id="current-password">
+                            <label for="old-owner">Titular actual</label>
+                            <input type="text" id="old-owner" placeholder="Nombre del titular actual">
                         </div>
                         <div class="form-group">
-                            <label for="new-password">Nueva contraseña</label>
-                            <input type="password" id="new-password">
+                            <label for="new-owner">Nuevo titular</label>
+                            <input type="text" id="new-owner" placeholder="Nombre del nuevo titular">
                         </div>
-                        <div class="form-group">
-                            <label for="confirm-password">Confirmar nueva contraseña</label>
-                            <input type="password" id="confirm-password">
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Solicitar cambio</button>
                         </div>
                     </form>
-                </div>
-                <div class="card">
-                    <h3>Autenticación de dos factores</h3>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <p>Añade una capa adicional de seguridad a tu cuenta.</p>
-                            <p style="font-size: 14px; color: #666; margin-top: 5px;">
-                                Estado: <span style="color: #e53935; font-weight: 500;">Desactivado</span>
-                            </p>
-                        </div>
-                        <button class="btn btn-primary">Activar</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Sección: Preferencias -->
-            <div class="section" id="preferences-section">
-                <h2 class="section-title">Preferencias</h2>
-                <div class="card">
-                    <h3>Notificaciones</h3>
-                    <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <p style="font-weight: 500;">Correo electrónico</p>
-                            <p style="font-size: 14px; color: #666;">Recibir facturas por correo electrónico</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox" checked>
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <p style="font-weight: 500;">WhatsApp</p>
-                            <p style="font-size: 14px; color: #666;">Recibir facturas por WhatsApp</p>
-                        </div>
-                        <label class="switch">
-                            <input type="checkbox">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="card">
-                    <h3>Idioma y formato</h3>
-                    <div class="form-group">
-                        <label for="language">Idioma</label>
-                        <select id="language">
-                            <option value="es">Español</option>
-                            <option value="en">English</option>
-                            <option value="pt">Português</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="date-format">Formato de fecha</label>
-                        <select id="date-format">
-                            <option value="dd/mm/yyyy">DD/MM/AAAA</option>
-                            <option value="mm/dd/yyyy">MM/DD/AAAA</option>
-                            <option value="yyyy/mm/dd">AAAA/MM/DD</option>
-                        </select>
-                    </div>
-                    <div>
-                        <button class="btn btn-primary">Guardar preferencias</button>
-                    </div>
-                </div>
-            </div>
-            <!-- Sección: Historial de Actividad -->
-            <div class="section" id="activity-section">
-                <h2 class="section-title">Historial de Actividad</h2>
-                <div class="card" style="padding: 0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Hora</th>
-                                <th>Actividad</th>
-                                <th>Detalles</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>19/04/2025</td>
-                                <td>09:45</td>
-                                <td><span class="badge badge-green">Sesión</span></td>
-                                <td>Inicio de sesión desde Santiago, Chile</td>
-                            </tr>
-                            <tr>
-                                <td>18/04/2025</td>
-                                <td>16:30</td>
-                                <td><span class="badge badge-blue">Documento</span></td>
-                                <td>Subida de documento: Factura-Abril2025.pdf</td>
-                            </tr>
-                            <tr>
-                                <td>15/04/2025</td>
-                                <td>11:20</td>
-                                <td><span class="badge badge-purple">Pago</span></td>
-                                <td>Pago realizado: $150.000</td>
-                            </tr>
-                            <tr>
-                                <td>10/04/2025</td>
-                                <td>14:10</td>
-                                <td><span class="badge badge-yellow">Reclamo</span></td>
-                                <td>Reclamo presentado #45678</td>
-                            </tr>
-                            <tr>
-                                <td>05/04/2025</td>
-                                <td>08:30</td>
-                                <td><span class="badge badge-green">Sesión</span></td>
-                                <td>Inicio de sesión desde Viña del Mar, Chile</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div style="padding: 15px; background-color: #f5f5f5; border-top: 1px solid #e0e0e0;">
-                        <a href="#" style="font-size: 14px; color: #1a73e8; text-decoration: none;">Ver historial completo</a>
-                    </div>
-                </div>
-            </div>
-            <!-- Sección: Gestión de Cuenta -->
-            <div class="section" id="account-section">
-                <h2 class="section-title">Gestión de Cuenta</h2>
-                <div class="card">
-                    <h3>Descargar mis datos</h3>
-                    <p style="margin-bottom: 15px;">Puedes descargar todos tus datos personales y tu historial de actividad en la plataforma.</p>
-                    <button class="btn btn-primary">Solicitar datos</button>
-                </div>
-                <div class="card">
-                    <h3 style="color: #e53935;">Eliminar cuenta</h3>
-                    <p style="margin-bottom: 15px;">Esta acción eliminará permanentemente tu cuenta y todos tus datos. Esta acción no se puede deshacer.</p>
-                    <button class="btn btn-danger">Solicitar eliminación de cuenta</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Script JavaScript para navegación fluida -->
+    <!-- Script JavaScript para navegación -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const navItems = document.querySelectorAll('.nav-item');
+            const navItems = document.querySelectorAll('.nav-item[data-section]');
             const sections = document.querySelectorAll('.section');
-            let activeSection = document.querySelector('.section.active');
 
-            // Función para mostrar sección con animación
             function showSection(sectionId) {
                 sections.forEach(section => {
                     if (section.id === sectionId + '-section') {
                         section.classList.add('active');
-                        // Scroll suave al inicio de la sección
                         setTimeout(() => {
                             section.scrollIntoView({ behavior: "smooth", block: "start" });
                         }, 50);
-                        activeSection = section;
                     } else {
                         section.classList.remove('active');
                     }
                 });
             }
 
-            // Navegación por click y teclado (accesibilidad)
             navItems.forEach(item => {
                 item.addEventListener('click', function () {
                     navItems.forEach(navItem => navItem.classList.remove('active'));
@@ -387,9 +258,13 @@
                     }
                 });
             });
-
-            // Opcional: En móvil, hacer que el menú sea colapsable (puedes agregar un botón si necesitas)
         });
+
+        function toggleSubmenu(item) {
+            const submenu = item.nextElementSibling;
+            submenu.classList.toggle("active");
+        }
     </script>
 </body>
 </html>
+
