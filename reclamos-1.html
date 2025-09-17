@@ -456,4 +456,75 @@
                             }
                         }
                         
-                        detalleReclamoBody.innerHTML = conteni
+                                                detalleReclamoBody.innerHTML = contenidoHTML;
+                    } else {
+                        detalleReclamoBody.innerHTML = '<p class="text-danger">No se encontró el reclamo.</p>';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error al cargar el detalle del reclamo:', error);
+                    detalleReclamoBody.innerHTML = '<p class="text-danger">Error al cargar el detalle.</p>';
+                });
+        }
+
+        // Cancelar reclamo
+        function cancelarReclamo(reclamoId) {
+            if (confirm('¿Está seguro que desea cancelar este reclamo?')) {
+                db.collection('reclamos').doc(reclamoId).update({
+                    estado: 'rechazado'
+                })
+                .then(() => {
+                    alert('Reclamo cancelado correctamente.');
+                    cargarReclamos();
+                })
+                .catch((error) => {
+                    console.error('Error al cancelar el reclamo:', error);
+                    alert('Error al cancelar el reclamo.');
+                });
+            }
+        }
+
+        // Funciones auxiliares
+        function obtenerNombreTipo(tipo) {
+            const tipos = {
+                'falta_agua': 'Falta de Agua',
+                'baja_presion': 'Baja Presión',
+                'perdida': 'Pérdida en la Vía Pública',
+                'facturacion': 'Problemas de Facturación',
+                'medidor': 'Problemas con el Medidor',
+                'otro': 'Otro'
+            };
+            return tipos[tipo] || 'Desconocido';
+        }
+
+        function obtenerNombreEstado(estado) {
+            const estados = {
+                'pendiente': 'Pendiente',
+                'en_proceso': 'En Proceso',
+                'resuelto': 'Resuelto',
+                'rechazado': 'Rechazado'
+            };
+            return estados[estado] || 'Desconocido';
+        }
+
+        function obtenerNombreUrgencia(urgencia) {
+            const urgencias = {
+                'baja': 'Baja',
+                'media': 'Media',
+                'alta': 'Alta',
+                'urgente': 'Urgente'
+            };
+            return urgencias[urgencia] || 'Desconocida';
+        }
+
+        function recortarTexto(texto, longitud) {
+            if (!texto) return '';
+            return texto.length > longitud ? texto.substring(0, longitud) + '...' : texto;
+        }
+    </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
