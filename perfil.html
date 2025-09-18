@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil de Usuario - Oficina Virtual</title>
+    <title>Perfil de Usuario</title>
 
     <!-- Estilos CSS -->
     <style>
@@ -319,27 +319,32 @@
                 <h2>Mi Perfil</h2>
             </div>
             <div class="nav-menu">
-                <div class="nav-item active" data-section="personal">
-                    <i class="fas fa-user"></i>
-                    <span>Información Personal</span>
-                </div>
-                <div class="nav-item" data-section="security">
-                    <i class="fas fa-shield-alt"></i>
-                    <span>Seguridad</span>
-                </div>
-                <div class="nav-item" data-section="preferences">
-                    <i class="fas fa-bell"></i>
-                    <span>Preferencias</span>
-                </div>
-                <div class="nav-item" data-section="activity">
-                    <i class="fas fa-clock"></i>
-                    <span>Historial de Actividad</span>
-                </div>
-                <div class="nav-item" data-section="account">
-                    <i class="fas fa-cog"></i>
-                    <span>Gestión de Cuenta</span>
-                </div>
-            </div>
+    <!-- Mis Datos -->
+    <div class="nav-item active" data-section="datos">
+        <i class="fas fa-user"></i>
+        <span>Mis Datos</span>
+    </div>
+
+    <!-- Mis Suministros -->
+    <div class="nav-item" data-section="suministros">
+        <i class="fas fa-tachometer-alt"></i>
+        <span>Mis Suministros</span>
+    </div>
+
+    <!-- Trámites con submenú -->
+    <div class="nav-item" onclick="this.classList.toggle('open');">
+        <i class="fas fa-folder-open"></i>
+        <span>Trámites ▾</span>
+    </div>
+    <div class="submenu" style="display:none;padding-left:30px;">
+        <div class="nav-item" data-section="nuevo-medidor">1 - Nuevo medidor</div>
+        <div class="nav-item" data-section="cambio-medidor">2 - Cambio de medidor</div>
+        <div class="nav-item" data-section="cambio-titularidad">3 - Cambio de titularidad</div>
+        <div class="nav-item" data-section="alta-baja-sociedad">4 - Alta/Baja sociedad de fomento</div>
+        <div class="nav-item" data-section="baja-agua">5 - Baja del servicio de agua</div>
+    </div>
+</div>
+
             <!-- Botón de regreso al dashboard -->
             <a href="dashboard.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
