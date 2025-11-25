@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario - Oficina Virtual</title>
+
+    <!-- Estilos CSS -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Barra lateral */
+        .sidebar {
+            width: 250px;
+            background-color: #fff;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .nav-menu {
+            margin-top: 20px;
+            flex-grow: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .nav-item:hover {
+            background-color: #f0f5ff;
+        }
+
+        .nav-item.active {
+            background-color: #e6f0ff;
+            color: #1a73e8;
+            border-right: 4px solid #1a73e8;
+        }
+
+        .nav-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        /* Botón de regreso */
+        .back-button {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: #f5f5f5;
+            color: #555;
+            text-decoration: none;
+            font-weight: 500;
+            border-top: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #e6f0ff;
+            color: #1a73e8;
+        }
+
+        .back-button i {
+            margin-right: 10px;
+        }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .form-col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 250px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="password"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1557b0;
+        }
+
+        .btn-danger {
+            background-color: white;
+            color: #e53935;
+            border: 1px solid #e53935;
+        }
+
+        .btn-danger:hover {
+            background-color: #ffebee;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            background-color: #f5f5f5;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background-color: white;
+            color: #e53935;
+            border: 1px solid #e53935;
+        }
+
+        .btn-delete:hover {
+            background-color: #ffebee;
+        }
+
+        .btn-select {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .btn-select:hover {
+            background-color: #45a049;
+        }
+
+        .suministro-selected {
+            border: 2px solid #4caf50 !important;
+            background-color: #f1f8f4;
+        }
+
+        .medidor-photo {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .photo-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-green {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .badge-blue {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-purple {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .badge-yellow {
+            background-color: #fff8e1;
+            color: #f9a825;
+        }
+
+        /* Switch para activar/desactivar */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #1a73e8;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #1a73e8;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Barra lateral -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Mi Perfil</h2>
+            </div>
+            <div class="nav-menu">
+                <div class="nav-item active" data-section="personal">
+                    <i class="fas fa-user"></i>
+                    <span>Información Personal</span>
+                </div>
+                <div class="nav-item" data-section="suministros">
+                    <i class="fas fa-tint"></i>
+                    <span>Mis Suministros</span>
+                </div>
+                <div class="nav-item" data-section="tramites">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Trámites</span>
+                </div>
+                <div class="nav-item" data-section="security">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Seguridad</span>
+                </div>
+                <div class="nav-item" data-section="preferences">
+                    <i class="fas fa-bell"></i>
+                    <span>Preferencias</span>
+                </div>
+                <div class="nav-item" data-section="activity">
+                    <i class="fas fa-clock"></i>
+                    <span>Historial de Actividad</span>
+                </div>
+                <div class="nav-item" data-section="account">
+                    <i class="fas fa-cog"></i>
+                    <span>Gestión de Cuenta</span>
+                </div>
+            </div>
+            <!-- Botón de regreso al dashboard -->
+            <a href="dashboard.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span>Volver al Dashboard</span>
+            </a>
+        </div>
+
+        <!-- Contenido principal -->
+        <div class="content">
+            <!-- Sección: Información Personal -->
+            <div class="section" id="personal-section">
+                <h2 class="section-title">Información Personal</h2>
+                
+                <!-- Datos Personales -->
+                <div class="card">
+                    <h3>Datos Personales</h3>
+                    <form>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="firstname">Nombre *</label>
+                                    <input type="text" id="firstname" placeholder="Ingresá tu nombre" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="lastname">Apellido *</label>
+                                    <input type="text" id="lastname" placeholder="Ingresá tu apellido" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="dni">DNI *</label>
+                                    <input type="text" id="dni" placeholder="Ingresá tu DNI" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="birthdate">Fecha de nacimiento *</label>
+                                    <input type="date" id="birthdate" placeholder="dd/mm/aaaa" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="email">Correo electrónico *</label>
+                                    <input type="email" id="email" placeholder="Ej: ejemplo@correo.com" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="phone">Teléfono *</label>
+                                    <input type="tel" id="phone" placeholder="Ej: 01112345678" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Datos para Facturación -->
+                <div class="card">
+                    <h3>Datos para Facturación</h3>
+                    <form>
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="tipo-factura">Tipo de Factura *</label>
+                                    <select id="tipo-factura" required>
+                                        <option value="">Seleccioná el tipo</option>
+                                        <option value="A">A - Responsable Inscripto</option>
+                                        <option value="B">B - Consumidor Final</option>
+                                        <option value="C">C - Exento</option>
+                                        <option value="M">M - Monotributista</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="cuit-cuil">CUIT/CUIL *</label>
+                                    <input type="text" id="cuit-cuil" placeholder="Ej: 20-12345678-9" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="provincia">Provincia *</label>
+                                    <select id="provincia" required>
+                                        <option value="">Seleccioná tu provincia</option>
+                                        <option value="buenos-aires">Buenos Aires</option>
+                                        <option value="cordoba">Córdoba</option>
+                                        <option value="santa-fe">Santa Fe</option>
+                                        <option value="mendoza">Mendoza</option>
+                                        <option value="tucuman">Tucumán</option>
+                                        <option value="entre-rios">Entre Ríos</option>
+                                        <option value="salta">Salta</option>
+                                        <option value="chaco">Chaco</option>
+                                        <option value="corrientes">Corrientes</option>
+                                        <option value="misiones">Misiones</option>
+                                        <option value="santiago-del-estero">Santiago del Estero</option>
+                                        <option value="san-juan">San Juan</option>
+                                        <option value="jujuy">Jujuy</option>
+                                        <option value="rio-negro">Río Negro</option>
+                                        <option value="neuquen">Neuquén</option>
+                                        <option value="formosa">Formosa</option>
+                                        <option value="chubut">Chubut</option>
+                                        <option value="san-luis">San Luis</option>
+                                        <option value="catamarca">Catamarca</option>
+                                        <option value="la-rioja">La Rioja</option>
+                                        <option value="la-pampa">La Pampa</option>
+                                        <option value="santa-cruz">Santa Cruz</option>
+                                        <option value="tierra-del-fuego">Tierra del Fuego</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="localidad">Localidad *</label>
+                                    <input type="text" id="localidad" placeholder="Ej: Rosario" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="address">Domicilio *</label>
+                                    <input type="text" id="address" placeholder="Ej: Av. Santa Fe" required>
+                                </div>
+                            </div>
+                            <div class="form-col">
+                                <div class="form-group">
+                                    <label for="numero">Número *</label>
+                                    <input type="text" id="numero" placeholder="Ej: 1234" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="postal-code">Código postal *</label>
+                            <input type="text" id="postal-code" placeholder="Ej: 1426" required style="max-width: 300px;">
+                        </div>
+
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sección: Seguridad -->
+            <div class="section" id="security-section" style="display: none;">
+                <h2 class="section-title">Seguridad</h2>
+                <div class="card">
+                    <h3>Cambiar contraseña</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="current-password">Contraseña actual</label>
+                            <input type="password" id="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">Nueva contraseña</label>
+                            <input type="password" id="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirmar nueva contraseña</label>
+                            <input type="password" id="confirm-password">
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary">Actualizar contraseña</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3>Autenticación de dos factores</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p>Añade una capa adicional de seguridad a tu cuenta.</p>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">
+                                Estado: <span style="color: #e53935; font-weight: 500;">Desactivado</span>
+                            </p>
+                        </div>
+                        <button class="btn btn-primary">Activar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Preferencias -->
+            <div class="section" id="preferences-section" style="display: none;">
+                <h2 class="section-title">Preferencias</h2>
+                <div class="card">
+                    <h3>Notificaciones</h3>
+                    <div
+                        style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="font-weight: 500;">Correo electrónico</p>
+                            <p style="font-size: 14px; color: #666;">Recibir facturas por correo electrónico</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="font-weight: 500;">WhatsApp</p>
+                            <p style="font-size: 14px; color: #666;">Recibir facturas por WhatsApp</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Idioma y formato</h3>
+                    <div class="form-group">
+                        <label for="language">Idioma</label>
+                        <select id="language">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                            <option value="pt">Português</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date-format">Formato de fecha</label>
+                        <select id="date-format">
+                            <option value="dd/mm/yyyy">DD/MM/AAAA</option>
+                            <option value="mm/dd/yyyy">MM/DD/AAAA</option>
+                            <option value="yyyy/mm/dd">AAAA/MM/DD</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary">Guardar preferencias</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Mis Suministros -->
+            <div class="section" id="suministros-section" style="display: none;">
+                <h2 class="section-title">Mis Suministros</h2>
+                
+                <!-- Alerta de suministro seleccionado -->
+                <div class="card" style="background-color: #e8f5e9; border-left: 4px solid #4caf50;">
+                    <p style="margin: 0; font-size: 14px;">
+                        <i class="fas fa-info-circle" style="color: #4caf50; margin-right: 8px;"></i>
+                        <strong>Suministro seleccionado:</strong> <span id="selected-suministro-display">00525 - Av. Libertador 1234</span>
+                    </p>
+                    <p style="margin: 5px 0 0 0; font-size: 13px; color: #666;">
+                        Este suministro se mostrará en tus facturas y consumos.
+                    </p>
+                </div>
+
+                <!-- Lista de Suministros -->
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>Suministros Registrados</h3>
+                        <button class="btn btn-primary">+ Agregar Suministro</button>
+                    </div>
+
+                    <!-- Suministro 1 -->
+                    <div class="suministro-card suministro-selected" data-suministro-id="00525" style="border: 2px solid #4caf50; background-color: #f1f8f4; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="margin-bottom: 5px; font-size: 16px;">Suministro Principal</h4>
+                                <span class="badge badge-green">Seleccionado</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-delete" style="padding: 8px 12px; font-size: 13px; margin-left: 5px;">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">DATOS DEL SUMINISTRO</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Número de Suministro</p>
+                                    <p style="font-size: 15px; font-weight: 500;">00525</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Tipo de Servicio</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Agua Potable</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">UBICACIÓN</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Dirección</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Av. Libertador 1234</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Localidad</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Tornquist, Buenos Aires</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Código Postal</p>
+                                    <p style="font-size: 15px; font-weight: 500;">8160</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #fff; padding: 15px; border-radius: 6px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">DATOS DEL MEDIDOR</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Número de Medidor</p>
+                                    <p style="font-size: 15px; font-weight: 500;">MED-2024-0525</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Tipo de Medidor</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Digital</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Marca</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Itron</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Fecha de Instalación</p>
+                                    <p style="font-size: 15px; font-weight: 500;">15/03/2024</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Última Lectura</p>
+                                    <p style="font-size: 15px; font-weight: 500;">1,245 m³</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Fecha de Lectura</p>
+                                    <p style="font-size: 15px; font-weight: 500;">20/11/2025</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Foto del Medidor -->
+                            <div class="photo-container">
+                                <p style="font-size: 13px; color: #888; margin-bottom: 8px;">
+                                    <i class="fas fa-camera"></i> Foto del Medidor
+                                </p>
+                                <img src="https://via.placeholder.com/400x300/e3f2fd/1565c0?text=Foto+del+Medidor" 
+                                     alt="Foto del medidor" 
+                                     class="medidor-photo">
+                                <p style="font-size: 12px; color: #999; margin-top: 8px;">
+                                    Capturada el 20/11/2025 a las 14:32
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Suministro 2 (Ejemplo) -->
+                    <div class="suministro-card" data-suministro-id="00526" style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                            <div>
+                                <h4 style="margin-bottom: 5px; font-size: 16px;">Suministro Secundario</h4>
+                                <span class="badge badge-blue">Disponible</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-select suministro-select-btn" data-target="00526" style="padding: 8px 12px; font-size: 13px; margin-right: 5px;">
+                                    <i class="fas fa-check"></i> Seleccionar
+                                </button>
+                                <button class="btn btn-delete" style="padding: 8px 12px; font-size: 13px;">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">DATOS DEL SUMINISTRO</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Número de Suministro</p>
+                                    <p style="font-size: 15px; font-weight: 500;">00526</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Tipo de Servicio</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Agua Potable</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">UBICACIÓN</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Dirección</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Calle San Martín 567</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Localidad</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Tornquist, Buenos Aires</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Código Postal</p>
+                                    <p style="font-size: 15px; font-weight: 500;">8160</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 6px;">
+                            <h5 style="font-size: 14px; color: #666; margin-bottom: 10px;">DATOS DEL MEDIDOR</h5>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Número de Medidor</p>
+                                    <p style="font-size: 15px; font-weight: 500;">MED-2024-0526</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Tipo de Medidor</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Analógico</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Marca</p>
+                                    <p style="font-size: 15px; font-weight: 500;">Elster</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Fecha de Instalación</p>
+                                    <p style="font-size: 15px; font-weight: 500;">10/01/2023</p>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Última Lectura</p>
+                                    <p style="font-size: 15px; font-weight: 500;">892 m³</p>
+                                </div>
+                                <div class="form-col">
+                                    <p style="font-size: 13px; color: #888; margin-bottom: 3px;">Fecha de Lectura</p>
+                                    <p style="font-size: 15px; font-weight: 500;">20/11/2025</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Foto del Medidor -->
+                            <div class="photo-container">
+                                <p style="font-size: 13px; color: #888; margin-bottom: 8px;">
+                                    <i class="fas fa-camera"></i> Foto del Medidor
+                                </p>
+                                <img src="https://via.placeholder.com/400x300/f3e5f5/7b1fa2?text=Foto+del+Medidor" 
+                                     alt="Foto del medidor" 
+                                     class="medidor-photo">
+                                <p style="font-size: 12px; color: #999; margin-top: 8px;">
+                                    Capturada el 20/11/2025 a las 15:10
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Sección: Trámites -->
+            <div class="section" id="tramites-section" style="display: none;">
+                <h2 class="section-title">Trámites</h2>
+                
+                <div class="card">
+                    <h3>Solicitud de Trabajos Especiales</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Solicita trabajos de mantenimiento, instalación o reparación en tu suministro.</p>
+                    <button class="btn btn-primary">Nueva Solicitud</button>
+                </div>
+
+                <div class="card">
+                    <h3>Cambio de Titularidad</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Inicia el proceso de transferencia del servicio a otro titular.</p>
+                    <button class="btn btn-primary">Solicitar Cambio</button>
+                </div>
+
+                <div class="card">
+                    <h3>Consulta de Deuda</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Verifica el estado de tus pagos y deudas pendientes.</p>
+                    <button class="btn btn-primary">Ver Estado de Cuenta</button>
+                </div>
+
+                <div class="card">
+                    <h3>Certificado de Libre Deuda</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Solicita un certificado que acredite que no tienes deudas pendientes.</p>
+                    <button class="btn btn-primary">Solicitar Certificado</button>
+                </div>
+
+                <div class="card">
+                    <h3>Otros Formularios</h3>
+                    <p style="margin-bottom: 15px; color: #666;">Accede a otros trámites y formularios disponibles.</p>
+                    <button class="btn btn-primary">Ver Formularios</button>
+                </div>
+            </div>
+
+            <!-- Sección: Historial de Actividad -->
+            <div class="section" id="activity-section" style="display: none;">
+                <h2 class="section-title">Historial de Actividad</h2>
+                <div class="card" style="padding: 0;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Actividad</th>
+                                <th>Detalles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>19/04/2025</td>
+                                <td>09:45</td>
+                                <td><span class="badge badge-green">Sesión</span></td>
+                                <td>Inicio de sesión desde Santiago, Chile</td>
+                            </tr>
+                            <tr>
+                                <td>18/04/2025</td>
+                                <td>16:30</td>
+                                <td><span class="badge badge-blue">Documento</span></td>
+                                <td>Subida de documento: Factura-Abril2025.pdf</td>
+                            </tr>
+                            <tr>
+                                <td>15/04/2025</td>
+                                <td>11:20</td>
+                                <td><span class="badge badge-purple">Pago</span></td>
+                                <td>Pago realizado: $150.000</td>
+                            </tr>
+                            <tr>
+                                <td>10/04/2025</td>
+                                <td>14:10</td>
+                                <td><span class="badge badge-yellow">Reclamo</span></td>
+                                <td>Reclamo presentado #45678</td>
+                            </tr>
+                            <tr>
+                                <td>05/04/2025</td>
+                                <td>08:30</td>
+                                <td><span class="badge badge-green">Sesión</span></td>
+                                <td>Inicio de sesión desde Viña del Mar, Chile</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div style="padding: 15px; background-color: #f5f5f5; border-top: 1px solid #e0e0e0;">
+                        <a href="#" style="font-size: 14px; color: #1a73e8; text-decoration: none;">Ver historial
+                            completo</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección: Gestión de Cuenta -->
+            <div class="section" id="account-section" style="display: none;">
+                <h2 class="section-title">Gestión de Cuenta</h2>
+                <div class="card">
+                    <h3>Descargar mis datos</h3>
+                    <p style="margin-bottom: 15px;">Puedes descargar todos tus datos personales y tu historial de
+                        actividad en la plataforma.</p>
+                    <button class="btn btn-primary">Solicitar datos</button>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #e53935;">Eliminar cuenta</h3>
+                    <p style="margin-bottom: 15px;">Esta acción eliminará permanentemente tu cuenta y todos tus datos.
+                        Esta acción no se puede deshacer.</p>
+                    <button class="btn btn-danger">Solicitar eliminación de cuenta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript para la navegación -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtener los elementos de navegación y las secciones
+            const navItems = document.querySelectorAll('.nav-item');
+            const sections = document.querySelectorAll('.section');
+
+            // Función para mostrar una sección y ocultar las demás
+            function showSection(sectionId) {
+                sections.forEach(section => {
+                    if (section.id === sectionId + '-section') {
+                        section.style.display = 'block';
+                    } else {
+                        section.style.display = 'none';
+                    }
+                });
+            }
+
+            // Agregar eventos de clic a los elementos de navegación
+            navItems.forEach(item => {
+                item.addEventListener('click', function () {
+                    // Quitar la clase 'active' de todos los elementos de navegación
+                    navItems.forEach(navItem => {
+                        navItem.classList.remove('active');
+                    });
+
+                    // Agregar la clase 'active' al elemento de navegación seleccionado
+                    this.classList.add('active');
+
+                    // Mostrar la sección correspondiente
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                });
+            });
+
+            // ========== GESTIÓN DE SUMINISTROS ==========
+            
+            // Variable para almacenar el suministro seleccionado (guardado en localStorage)
+            let selectedSuministro = localStorage.getItem('selectedSuministro') || '00525';
+            
+            // Función para actualizar el suministro seleccionado
+            function updateSelectedSuministro(suministroId) {
+                selectedSuministro = suministroId;
+                localStorage.setItem('selectedSuministro', suministroId);
+                
+                // Actualizar todas las tarjetas de suministro
+                const allCards = document.querySelectorAll('.suministro-card');
+                allCards.forEach(card => {
+                    const cardId = card.getAttribute('data-suministro-id');
+                    const badge = card.querySelector('.badge');
+                    const selectBtn = card.querySelector('.suministro-select-btn');
+                    
+                    if (cardId === suministroId) {
+                        // Marcar como seleccionado
+                        card.classList.add('suministro-selected');
+                        card.style.border = '2px solid #4caf50';
+                        card.style.backgroundColor = '#f1f8f4';
+                        badge.className = 'badge badge-green';
+                        badge.textContent = 'Seleccionado';
+                        
+                        // Ocultar botón de seleccionar
+                        if (selectBtn) selectBtn.style.display = 'none';
+                        
+                        // Actualizar el display en la alerta superior
+                        const address = card.querySelector('.form-col p:last-child').textContent;
+                        document.getElementById('selected-suministro-display').textContent = 
+                            `${suministroId} - ${address}`;
+                    } else {
+                        // Marcar como disponible
+                        card.classList.remove('suministro-selected');
+                        card.style.border = '1px solid #e0e0e0';
+                        card.style.backgroundColor = 'white';
+                        badge.className = 'badge badge-blue';
+                        badge.textContent = 'Disponible';
+                        
+                        // Mostrar botón de seleccionar
+                        if (selectBtn) selectBtn.style.display = 'inline-block';
+                    }
+                });
+                
+                // Aquí podrías hacer una llamada AJAX para actualizar en el servidor
+                console.log('Suministro seleccionado:', suministroId);
+            }
+            
+            // Aplicar el suministro seleccionado al cargar la página
+            updateSelectedSuministro(selectedSuministro);
+            
+            // Agregar listeners a los botones de seleccionar
+            document.querySelectorAll('.suministro-select-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    updateSelectedSuministro(targetId);
+                    
+                    // Mostrar mensaje de confirmación
+                    alert('Suministro seleccionado correctamente. Este suministro se mostrará en tus facturas.');
+                });
+            });
+            
+            // Función para obtener el suministro seleccionado (para usar en otras páginas)
+            window.getSelectedSuministro = function() {
+                return localStorage.getItem('selectedSuministro') || '00525';
+            };
+        });
+    </script>
+</body>
+
+</html>
